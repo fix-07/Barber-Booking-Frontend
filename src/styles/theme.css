@@ -1,0 +1,919 @@
+/* ==========================================================================
+   VEYRON - Bootstrap theme
+
+   HOW THIS FILE WORKS
+
+   We do NOT rewrite Bootstrap. Bootstrap 5.3 exposes almost everything as CSS
+   variables (the --bs-* ones), so this file just changes those values. That
+   means you keep every Bootstrap component, and upgrading Bootstrap later will
+   not wipe out your styling.
+
+   Load order matters, and it is set in src/index.js:
+       1. bootstrap/dist/css/bootstrap.min.css
+       2. this file
+   This file must come second, or Bootstrap would overwrite it.
+
+   WHY WE OVERRIDE THE COLOURS AT ALL
+
+   Bootstrap's defaults are not broken, but they are marginal. Measured against
+   white, Bootstrap's blue link, primary button, .text-muted, .text-danger and
+   .text-success all land on almost exactly 4.50:1, where 4.50:1 is the minimum
+   the WCAG AA standard allows for normal text. There is no room left for a
+   slightly dimmer screen or older eyes.
+
+   The replacements below measure between 6.37:1 and 17.70:1. The numbers in
+   the comments are real, calculated values, not guesses.
+
+   WHAT IS DELIBERATELY NOT HERE: purple, decorative gradients, pill-shaped
+   buttons (we never use Bootstrap's .rounded-pill), emoji as icons, scroll or
+   cursor animations.
+   ========================================================================== */
+
+:root {
+  /* ---- our palette ---------------------------------------------------- */
+  --bb-black: #0e0e10;
+  --bb-surface: #17171a;
+  --bb-surface-raised: #1f1f24;
+  --bb-border-dark: #2e2e35;
+  --bb-border-strong: #3d3d46;
+
+  --bb-text-on-dark: #f5f5f6;
+  --bb-muted-on-dark: #a9a9b2;
+
+  --bb-ink: #16161a;
+  --bb-ink-muted: #55555f;
+
+  --bb-gold: #d4a63c;
+  --bb-gold-hover: #e0b553;
+  --bb-gold-ink: #7a5a12; /* darker gold, for text on white */
+
+  --bb-danger-ink: #a3231a;
+  --bb-success-ink: #1d6b45;
+
+  /*
+    A SPACING SCALE, so "more generous spacing" means picking a step on a
+    fixed scale, not inventing a number per component. Doubling roughly every
+    other step, the same idea a type scale uses.
+  */
+  --bb-space-1: 0.25rem;
+  --bb-space-2: 0.5rem;
+  --bb-space-3: 0.75rem;
+  --bb-space-4: 1rem;
+  --bb-space-5: 1.5rem;
+  --bb-space-6: 2.25rem;
+  --bb-space-7: 3.5rem;
+  --bb-space-8: 5.5rem;
+
+  /* ---- Bootstrap overrides -------------------------------------------- */
+
+  /* System fonts only. No webfont is downloaded, so no request goes to
+     another company and there is nothing to disclose in the cookie policy. */
+  --bs-body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  /*
+    A DISPLAY FONT FOR HEADINGS, WITH THE SAME PRIVACY RULE APPLIED.
+
+    Georgia ships on essentially every Windows, Mac and Linux desktop, so this
+    is still a system font: nothing is downloaded, no request leaves the site,
+    and the Cookie Policy's "loads nothing from another company" claim stays
+    true. It is used only for page headings (<h1>) and the brand wordmark, so
+    every page keeps one large serif title over the same clean sans-serif body
+    text used everywhere else -- a plain, common pairing that reads as
+    considered rather than a default framework look, without adding a single
+    byte to what the browser downloads.
+  */
+  --bb-font-display: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino,
+    "Times New Roman", serif;
+
+  --bs-body-color: var(--bb-ink);
+  --bs-body-bg: #ffffff;
+
+  /* .text-muted reads from this in Bootstrap 5.3.
+     Ours is 7.37:1 against white; Bootstrap's #6c757d is 4.69:1. */
+  --bs-secondary-color: var(--bb-ink-muted);
+
+  /* Links. 6.37:1 against white, versus Bootstrap's blue at 4.50:1. */
+  --bs-link-color: var(--bb-gold-ink);
+  --bs-link-hover-color: #5c440d;
+
+  /* Slightly rounded, never pill-shaped. */
+  --bs-border-radius: 0.375rem;
+  --bs-border-radius-lg: 0.5rem;
+
+  /* The focus ring. See the focus section below for why this matters. */
+  --bs-focus-ring-width: 3px;
+  --bs-focus-ring-opacity: 1;
+  --bs-focus-ring-color: var(--bb-gold);
+}
+
+/* --------------------------------------------------------------------------
+   TYPOGRAPHY
+
+   One serif display headline per page, everything else in the clean sans
+   stack. This is the single biggest lever in this file for moving away from
+   "default Bootstrap" without touching layout or adding a dependency: a page
+   still reads Log in / My services / Find a barber, it just reads as a
+   considered heading rather than a framework default.
+   -------------------------------------------------------------------------- */
+
+h1 {
+  font-family: var(--bb-font-display);
+  letter-spacing: -0.01em;
+}
+
+/* The wordmark in the header. Same treatment, so the brand and every page
+   title share one voice. */
+.navbar-brand {
+  font-family: var(--bb-font-display);
+  font-size: 1.3rem;
+  letter-spacing: 0.03em;
+}
+
+/*
+  Nav links get the confident, tracked-out all-caps treatment a premium
+  brand's navigation typically uses, rather than default-weight sentence
+  case. Small in size, so it reads as refined rather than shouted.
+*/
+.bb-navbar .nav-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* A thin gold seam under the header, instead of a flat grey line. It is a
+   gradient in the sense of "a line that fades at both ends", not the
+   decorative colour-wash gradients the brief rules out. */
+.bb-navbar {
+  border-bottom: none;
+  box-shadow: inset 0 -1px 0 0 var(--bb-border-dark);
+  position: relative;
+}
+
+.bb-navbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 166, 60, 0.55) 50%,
+    transparent
+  );
+}
+
+/* --------------------------------------------------------------------------
+   SECTION KICKERS
+
+   A small uppercase label with a short rule beside it, used above a section
+   heading ("THE PROCESS" above "How booking works"). This is editorial
+   structure, not a claim -- it never states a number or a status, so there is
+   nothing here that could be untrue. Two colour variants: gold-ink for a
+   light background, plain gold for a dark one, both already measured
+   elsewhere in this file (6.37:1 and 7.94:1).
+   -------------------------------------------------------------------------- */
+
+.bb-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bb-gold-ink);
+}
+
+.bb-kicker::before {
+  content: "";
+  flex: none;
+  width: 28px;
+  height: 2px;
+  background-color: currentColor;
+}
+
+.bb-hero .bb-kicker,
+.bb-dark-card .bb-kicker,
+.bb-footer .bb-kicker {
+  color: var(--bb-gold);
+}
+
+/* --------------------------------------------------------------------------
+   BUTTONS
+
+   Bootstrap 5.3 builds each button variant from its own --bs-btn-* variables,
+   so we set those rather than writing new rules. The component keeps all its
+   built-in behaviour (disabled state, active state, sizing).
+   -------------------------------------------------------------------------- */
+
+/* Primary: gold with near-black text. 8.01:1. */
+.btn-primary {
+  --bs-btn-color: var(--bb-ink);
+  --bs-btn-bg: var(--bb-gold);
+  --bs-btn-border-color: var(--bb-gold);
+  --bs-btn-hover-color: var(--bb-ink);
+  --bs-btn-hover-bg: var(--bb-gold-hover);
+  --bs-btn-hover-border-color: var(--bb-gold-hover);
+  --bs-btn-active-color: var(--bb-ink);
+  --bs-btn-active-bg: #c2952f;
+  --bs-btn-active-border-color: #c2952f;
+  --bs-btn-disabled-color: var(--bb-ink);
+  --bs-btn-disabled-bg: var(--bb-gold);
+  --bs-btn-disabled-border-color: var(--bb-gold);
+}
+
+/* Outline dark: our everyday secondary action on light backgrounds. */
+.btn-outline-dark {
+  --bs-btn-color: var(--bb-ink);
+  --bs-btn-border-color: #d0d0d5;
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: var(--bb-ink);
+  --bs-btn-hover-border-color: var(--bb-ink);
+  --bs-btn-active-bg: var(--bb-ink);
+  --bs-btn-active-border-color: var(--bb-ink);
+}
+
+/* Outline light: the same idea on the dark hero and navbar. */
+.btn-outline-light {
+  --bs-btn-color: var(--bb-text-on-dark);
+  --bs-btn-border-color: var(--bb-border-strong);
+  --bs-btn-hover-color: var(--bb-gold);
+  --bs-btn-hover-bg: var(--bb-surface-raised);
+  --bs-btn-hover-border-color: var(--bb-gold);
+  --bs-btn-active-color: var(--bb-gold);
+  --bs-btn-active-bg: var(--bb-surface-raised);
+  --bs-btn-active-border-color: var(--bb-gold);
+}
+
+/* Danger: Bootstrap's #dc3545 is 4.53:1 on white. Ours is 7.47:1. */
+.btn-outline-danger {
+  --bs-btn-color: var(--bb-danger-ink);
+  --bs-btn-border-color: var(--bb-danger-ink);
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: var(--bb-danger-ink);
+  --bs-btn-hover-border-color: var(--bb-danger-ink);
+  --bs-btn-active-bg: #851c15;
+  --bs-btn-active-border-color: #851c15;
+}
+
+/*
+  A comfortable target size.
+
+  Bootstrap's default button is about 38px tall. 44px is the size assistive
+  technology guidance recommends, and it genuinely helps anyone using a phone
+  one-handed or with a tremor. Small buttons keep their own size, because they
+  sit inside dense table rows where 44px would be unusable.
+*/
+.btn:not(.btn-sm) {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+/*
+  A small lift on hover, the same tactile cue a raised button on a physical
+  surface gives you. This is the "simple transitions" the brief allows, not
+  the "over-the-top scroll animations" it rules out: one property, one
+  direction, over in a fifth of a second. Anyone with prefers-reduced-motion
+  set gets the colour change with no movement, because the site-wide reduced-
+  motion rule near the bottom of this file zeroes every transition-duration.
+*/
+.btn {
+  transition: transform 130ms ease, box-shadow 130ms ease,
+    background-color 130ms ease, border-color 130ms ease, color 130ms ease;
+}
+
+.btn-primary {
+  box-shadow: 0 2px 8px rgba(212, 166, 60, 0.28);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 6px 16px rgba(212, 166, 60, 0.38);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   FOCUS
+
+   The single most important accessibility rule in this file.
+
+   Someone navigating by keyboard has no cursor. The focus ring is the ONLY
+   thing telling them where they are. Never remove it.
+
+   Bootstrap's default ring is a soft blue glow. On our dark surfaces it nearly
+   disappears, so we use solid gold, which measures 8.56:1 against the near
+   black. On a gold button we switch to a dark ring, because gold on gold would
+   be invisible.
+   -------------------------------------------------------------------------- */
+
+*:focus-visible {
+  outline: 3px solid var(--bb-gold);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.btn-primary:focus-visible {
+  outline: 3px solid var(--bb-ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px var(--bb-gold);
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: var(--bb-gold-ink);
+  box-shadow: 0 0 0 0.2rem rgba(212, 166, 60, 0.45);
+}
+
+.form-check-input:checked {
+  background-color: var(--bb-gold-ink);
+  border-color: var(--bb-gold-ink);
+}
+
+/* --------------------------------------------------------------------------
+   NAVBAR AND FOOTER
+   -------------------------------------------------------------------------- */
+
+.bb-navbar {
+  background-color: var(--bb-black);
+  border-bottom: 1px solid var(--bb-border-dark);
+}
+
+.bb-navbar .navbar-brand,
+.bb-navbar .nav-link {
+  color: var(--bb-text-on-dark);
+}
+
+.bb-navbar .nav-link:hover,
+.bb-navbar .navbar-brand:hover {
+  color: var(--bb-gold);
+}
+
+/*
+  The page you are on.
+
+  React Router's NavLink sets aria-current="page", which is what a screen
+  reader announces. We show it visually with a colour AND an underline, so it
+  does not depend on colour alone.
+*/
+.bb-navbar .nav-link[aria-current="page"] {
+  color: var(--bb-gold);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.bb-footer {
+  background-color: var(--bb-black);
+  color: var(--bb-muted-on-dark);
+  border-top: 1px solid var(--bb-border-dark);
+
+  /* Same faint weave as the hero, so the two dark bookends of the page share
+     one texture rather than one having it and the other being flat. */
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(212, 166, 60, 0.05) 0px,
+    rgba(212, 166, 60, 0.05) 1px,
+    transparent 1px,
+    transparent 25px
+  );
+}
+
+.bb-footer a {
+  color: var(--bb-text-on-dark);
+  text-decoration: none;
+}
+
+.bb-footer a:hover {
+  color: var(--bb-gold);
+  text-decoration: underline;
+}
+
+.bb-footer h2 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--bb-text-on-dark);
+}
+
+/* Extra top/bottom room, on the spacing scale, since Bootstrap's own py-*
+   utilities stop at 3rem (py-5) and the footer needs more air than that to
+   read as a deliberate closing section rather than a cut-off list. */
+.bb-footer-inner {
+  padding-top: var(--bb-space-8);
+  padding-bottom: var(--bb-space-6);
+}
+
+/* The header's wordmark, repeated here so the footer opens the same way the
+   page did, rather than starting cold with a list of links. */
+.bb-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bb-space-2);
+  font-family: var(--bb-font-display);
+  font-size: 1.2rem;
+  letter-spacing: 0.03em;
+  color: var(--bb-text-on-dark) !important;
+  text-decoration: none !important;
+  margin-bottom: var(--bb-space-3);
+}
+
+.bb-footer-brand:hover {
+  color: var(--bb-gold) !important;
+}
+
+.bb-footer-tagline {
+  max-width: 32ch;
+  color: var(--bb-muted-on-dark);
+  margin-bottom: 0;
+}
+
+.bb-footer-rule {
+  height: 1px;
+  margin: var(--bb-space-6) 0 var(--bb-space-4);
+  background: linear-gradient(
+    90deg,
+    var(--bb-border-dark) 0%,
+    var(--bb-border-dark) 100%
+  );
+}
+
+.bb-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--bb-space-2) var(--bb-space-5);
+  color: var(--bb-muted-on-dark);
+}
+
+/* --------------------------------------------------------------------------
+   HERO AND SECTIONS
+   -------------------------------------------------------------------------- */
+
+/*
+  --------------------------------------------------------------------------
+  HERO
+
+  A split layout: copy on one side, the brand emblem on the other, echoing a
+  photograph-and-text hero without a photograph -- see components/
+  BrandEmblem.js for the full reasoning. Three background layers, in the
+  order they are listed (first layer paints on top):
+
+    1. the existing diagonal hairline weave, unchanged
+    2. a radial vignette, lighter at the top-left, dark at the far edges --
+       actual depth instead of one flat fill
+    3. the solid base colour, as a fallback and for the layers to blend onto
+
+  The vignette lightens the surface by at most one step on our own scale
+  (--bb-black to --bb-surface), so every contrast ratio already checked
+  against --bb-black in this file still holds; a one-step lift in a dark
+  neutral does not meaningfully change a ratio measured at 8:1 or above.
+  --------------------------------------------------------------------------
+*/
+.bb-hero {
+  position: relative;
+  background-color: var(--bb-black);
+  color: var(--bb-text-on-dark);
+  box-shadow: inset 0 -1px 0 0 var(--bb-border-dark);
+  padding: var(--bb-space-8) 0;
+  overflow: hidden;
+
+  background-image: repeating-linear-gradient(
+      135deg,
+      rgba(212, 166, 60, 0.05) 0px,
+      rgba(212, 166, 60, 0.05) 1px,
+      transparent 1px,
+      transparent 25px
+    ),
+    radial-gradient(
+      ellipse 900px 600px at 15% 10%,
+      var(--bb-surface) 0%,
+      var(--bb-black) 70%
+    );
+}
+
+.bb-hero .lead {
+  color: var(--bb-muted-on-dark);
+}
+
+.bb-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: var(--bb-space-7);
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 992px) {
+  .bb-hero-grid {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+}
+
+.bb-hero-kicker {
+  color: var(--bb-gold);
+}
+
+/*
+  The headline itself is the composition, not decoration around it -- see
+  the file header for why, given there is no photograph to lean on instead.
+  Deliberately larger and tighter-tracked than a normal <h1>, and rendered
+  as short stacked lines (each phrase its own line) rather than one running
+  sentence, the way a confident piece of signage reads.
+*/
+.bb-hero-title {
+  font-size: clamp(2.75rem, 6vw, 4.75rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  margin-bottom: var(--bb-space-5);
+}
+
+.bb-hero-title span {
+  display: block;
+}
+
+.bb-hero-lead {
+  max-width: 46ch;
+  font-size: 1.15rem;
+  color: var(--bb-muted-on-dark);
+  margin-bottom: var(--bb-space-6);
+}
+
+/*
+  The booking actions sit inside their own bordered panel rather than
+  floating loose under the headline, so the call to action reads as part of
+  the hero's composition -- the equivalent of a booking bar set into a hero
+  photograph, built here from a bordered surface instead.
+*/
+.bb-hero-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--bb-space-3);
+  padding: var(--bb-space-4);
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--bb-border-dark);
+  border-radius: var(--bs-border-radius-lg);
+}
+
+.bb-hero-art {
+  position: relative;
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .bb-hero-art {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* The emblem itself. Sized to bleed slightly past its own column on large
+   screens, the asymmetric composition the brief's examples ask for, rather
+   than a small centred icon. */
+.bb-emblem {
+  width: 100%;
+  max-width: 460px;
+  color: var(--bb-gold);
+  opacity: 0.9;
+}
+
+.bb-dark-card {
+  background-color: var(--bb-surface);
+  color: var(--bb-text-on-dark);
+  border-color: var(--bb-border-dark);
+}
+
+.bb-dark-card .list-group-item {
+  background-color: transparent;
+  color: var(--bb-text-on-dark);
+  border-color: var(--bb-border-dark);
+}
+
+/* --------------------------------------------------------------------------
+   CARDS
+
+   Bootstrap's own .shadow-sm is close to invisible, which is a large part of
+   why a page of cards can read as flat. A touch more rounding and a softer,
+   larger shadow keep the "professional cards, subtle shadows" the brief asks
+   for while giving them actual presence.
+   -------------------------------------------------------------------------- */
+
+.card {
+  border-radius: 0.6rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/*
+  For a card that is genuinely a link to somewhere else (a barber's listing,
+  for instance). Not applied to every card on the site: a static "About this
+  barber" panel or a table row is not going anywhere when you click it, and
+  a hover animation on something that does not respond to the click would be
+  misleading rather than polished.
+*/
+.bb-card-hover {
+  transition: transform 160ms ease, box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.bb-card-hover:hover {
+  transform: translateY(-3px);
+  border-color: var(--bb-gold);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07), 0 16px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   SKIP LINK
+
+   Lets a keyboard user jump past the navigation straight to the content.
+   Hidden until it receives focus, which is why it is the first thing in the
+   tab order but invisible to mouse users.
+   -------------------------------------------------------------------------- */
+
+.bb-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 1080;
+  padding: 0.75rem 1rem;
+  background: var(--bb-gold);
+  color: var(--bb-ink);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 var(--bs-border-radius) 0;
+}
+
+.bb-skip-link:focus {
+  left: 0;
+  color: var(--bb-ink);
+}
+
+/* --------------------------------------------------------------------------
+   TIME SLOT BUTTONS
+
+   These are real <button> elements so the keyboard reaches them. The chosen
+   one is marked with aria-pressed, which a screen reader announces as
+   "pressed", and a taken one is disabled with the word "booked" in its
+   accessible name. The line through it is a second, non-colour signal.
+   -------------------------------------------------------------------------- */
+
+.bb-slot {
+  width: 100%;
+  min-height: 44px;
+}
+
+.bb-slot[aria-pressed="true"] {
+  background-color: var(--bb-ink);
+  border-color: var(--bb-ink);
+  color: #ffffff;
+}
+
+.bb-slot:disabled {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+/* --------------------------------------------------------------------------
+   STATUS BADGES
+
+   The colour is a hint, never the message. Each badge always spells the status
+   out as a word, so it survives greyscale, colour blindness, printing, and
+   being read aloud.
+
+   NOTE: these are used with Bootstrap's <Badge bg="none"> so Bootstrap does
+   not paint its own background over ours.
+   -------------------------------------------------------------------------- */
+
+.bb-badge {
+  border: 1px solid currentColor;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+.bb-badge-pending {
+  color: #8a6206;
+  background-color: #fdf5e2;
+}
+.bb-badge-confirmed {
+  color: var(--bb-success-ink);
+  background-color: #eff8f3;
+}
+.bb-badge-cancelled {
+  color: var(--bb-danger-ink);
+  background-color: #fdf0ef;
+}
+.bb-badge-done {
+  color: #14538f;
+  background-color: #eef5fd;
+}
+.bb-badge-muted {
+  color: #4c4c55;
+  background-color: #f7f7f8;
+}
+
+/* --------------------------------------------------------------------------
+   LONG-FORM PAGES (the four policy pages)
+   -------------------------------------------------------------------------- */
+
+.bb-prose {
+  max-width: 760px;
+}
+
+.bb-prose h2 {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e3e3e6;
+  font-size: 1.4rem;
+}
+
+.bb-prose h3 {
+  margin-top: 1.5rem;
+  font-size: 1.15rem;
+}
+
+.bb-prose dt {
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+.bb-prose dd {
+  margin-left: 1rem;
+}
+
+/*
+  A business detail you still have to fill in.
+
+  IMPORTANT: this class is NOT called "placeholder". Bootstrap already has a
+  .placeholder class for loading skeletons, which paints the element in a solid
+  block of colour. Using that name would have made every unfilled business
+  detail invisible instead of obvious. Named .bb-needs-filling to stay clear of
+  it.
+
+  Deliberately loud: it should be impossible to publish these by accident.
+*/
+.bb-needs-filling {
+  background-color: #fdf5e2;
+  border-bottom: 2px dotted #8a6206;
+  color: #6b4d05;
+  font-weight: 600;
+  padding: 0 3px;
+  font-style: normal;
+}
+
+/* A note addressed to you, the site owner, not to your customers. */
+.bb-owner-note {
+  background-color: #f8f9fa;
+  border-left: 4px solid var(--bb-gold-ink);
+  border-radius: 0 var(--bs-border-radius) var(--bs-border-radius) 0;
+  padding: 1rem;
+  margin: 1rem 0;
+  font-size: 0.94rem;
+}
+
+.bb-owner-note p:last-child {
+  margin-bottom: 0;
+}
+
+.bb-owner-note strong {
+  color: var(--bb-gold-ink);
+}
+
+/* --------------------------------------------------------------------------
+   NUMBERED STEPS ("how booking works")
+   The numbers come from CSS counters, so they are decoration and the <ol>
+   carries the real meaning.
+   -------------------------------------------------------------------------- */
+
+.bb-steps {
+  counter-reset: bb-step;
+  list-style: none;
+  padding-left: 0;
+}
+
+.bb-steps > li {
+  counter-increment: bb-step;
+}
+
+.bb-steps > li .bb-step-number::before {
+  content: counter(bb-step);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: var(--bb-black);
+  color: var(--bb-gold);
+  border: 1px solid rgba(212, 166, 60, 0.35);
+  border-radius: var(--bs-border-radius);
+  font-family: var(--bb-font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  box-shadow: 0 3px 10px rgba(212, 166, 60, 0.22);
+}
+
+/* --------------------------------------------------------------------------
+   FEATURE ICON BADGE ("For barbers" section on the homepage)
+
+   Deliberately the same border colour, shadow and background as
+   .bb-step-number above, so the numbered "How it works" steps and these
+   feature tiles read as one designed system rather than two different
+   patterns that happen to share a page.
+   -------------------------------------------------------------------------- */
+
+.bb-feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 1rem;
+  background: var(--bb-black);
+  color: var(--bb-gold);
+  border: 1px solid rgba(212, 166, 60, 0.35);
+  border-radius: var(--bs-border-radius);
+  box-shadow: 0 3px 10px rgba(212, 166, 60, 0.22);
+}
+
+/* --------------------------------------------------------------------------
+   REVEAL ON SCROLL
+
+   Used by components/RevealOnScroll.js. Fades and lifts an element into
+   place once, the first time it scrolls into view. See that file for why
+   this is plain CSS and a small hook rather than an animation library.
+   -------------------------------------------------------------------------- */
+
+.bb-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+
+.bb-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Belt and braces: the global reduced-motion rule further down this file
+   already zeroes the transition-duration above, but that alone would still
+   start from opacity:0 for an instant before JavaScript runs. This removes
+   that gap entirely for anyone who has asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .bb-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MISC
+   -------------------------------------------------------------------------- */
+
+/* Keeps the footer at the bottom on short pages. */
+.bb-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.bb-main {
+  flex: 1;
+}
+
+/* Stops a long word or email address breaking the layout on a narrow phone. */
+body {
+  overflow-wrap: break-word;
+}
+
+/*
+  Respect the visitor's motion setting.
+
+  Some people get motion sickness or migraines from animation. If they have
+  asked their operating system to reduce motion, we honour it. Bootstrap has
+  its own transitions on dropdowns, collapses and modals, so this matters more
+  now than it did before.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

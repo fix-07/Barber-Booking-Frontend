@@ -1,0 +1,293 @@
+/* ==========================================================================
+   AUTH CARD (login and register)
+
+   A single dark card centered on a dark page, with a Log In / Sign Up
+   switcher at the top. See components/AuthCard.js for what this replaces,
+   why the switcher is real navigation rather than an ARIA tablist, and which
+   parts of the reference design were deliberately left out (fake OAuth
+   buttons, a dead "Forgot password?" link, "Remember me", the particle
+   animation) and why.
+
+   Every colour pairing introduced here was checked against WCAG. The lowest
+   ratio used is 7.84:1 (the error-message red against the card background),
+   where the minimum for normal text is 4.5:1.
+   ========================================================================== */
+
+.bb-auth-page {
+  min-height: calc(100vh - 68px);
+  background-color: var(--bb-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.bb-auth-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background-color: rgba(23, 23, 26, 0.92);
+  border: 1px solid var(--bb-border-dark);
+  border-radius: var(--bs-border-radius-lg, 0.5rem);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+
+  /* A single, short entrance. Guarded below for anyone who has asked their
+     system to reduce motion. */
+  opacity: 0;
+  transform: translateY(10px);
+  animation: bb-auth-card-in 320ms ease-out forwards;
+}
+
+@keyframes bb-auth-card-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bb-auth-card {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ------------------------------ switcher ------------------------------ */
+
+/*
+  Looks like a tab strip. Each option is a real <NavLink> to a real page --
+  see the long comment in AuthCard.js for why that matters and why this is
+  not role="tablist".
+*/
+.bb-auth-switcher {
+  display: flex;
+  gap: 4px;
+  margin: 16px 16px 0;
+  padding: 4px;
+  background-color: var(--bb-black);
+  border: 1px solid var(--bb-border-dark);
+  border-radius: var(--bs-border-radius, 0.375rem);
+}
+
+.bb-auth-tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px 12px;
+  min-height: 38px;
+  border-radius: calc(var(--bs-border-radius, 0.375rem) - 2px);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--bb-muted-on-dark);
+  text-decoration: none;
+}
+
+.bb-auth-tab:hover {
+  color: var(--bb-text-on-dark);
+  text-decoration: none;
+}
+
+/* The page you are on. Gold fill with near-black text: 8.01:1, the same
+   pairing already used for every primary button on the site. */
+.bb-auth-tab.is-active {
+  background-color: var(--bb-gold);
+  color: var(--bb-ink);
+}
+
+.bb-auth-tab.is-active:hover {
+  color: var(--bb-ink);
+}
+
+/* --------------------------------- body -------------------------------- */
+
+.bb-auth-card-body {
+  padding: 28px 24px 26px;
+}
+
+.bb-auth-card-body h1 {
+  color: #ffffff;
+  font-size: 1.55rem;
+  margin-bottom: 6px;
+}
+
+.bb-auth-sub {
+  color: var(--bb-muted-on-dark);
+  font-size: 0.92rem;
+  margin-bottom: 22px;
+}
+
+.bb-auth-footnote {
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: var(--bb-muted-on-dark);
+}
+
+/* Links inside the card. Gold on dark measures 7.94:1, the same pairing used
+   for links on every other dark section of the site (the hero, the
+   footer). */
+.bb-auth-card a {
+  color: var(--bb-gold);
+}
+
+.bb-auth-card a:hover {
+  color: var(--bb-gold-hover);
+}
+
+/* ------------------------ Alert, dark-scoped ---------------------------- */
+
+/*
+  The shared Alert component (components/Alert.js) is used across the whole
+  site, most of it on light pages, so its own styling stays Bootstrap's
+  default light alert. This overrides it only inside the dark auth card, so
+  the error/success banner does not read as a jarring pink box dropped onto
+  a black card.
+
+  Colours are solid, not translucent, specifically so the contrast numbers
+  below are exact rather than an estimate of how a translucent colour blends
+  with whatever is behind it.
+*/
+.bb-auth-card .alert-danger {
+  background-color: #2a1414;
+  border-color: #4a2020;
+  color: #ff8a80;
+}
+
+.bb-auth-card .alert-success {
+  background-color: #0f231a;
+  border-color: #1c3d2c;
+  color: #7ce0ab;
+}
+
+.bb-auth-card .alert-secondary {
+  background-color: #1f1f24;
+  border-color: var(--bb-border-dark);
+  color: #c9c9ce;
+}
+
+/* The dismiss "x" on a dark alert needs to be visible too -- Bootstrap's
+   default close icon is a dark glyph meant for a light background. */
+.bb-auth-card .alert .btn-close {
+  filter: invert(1) grayscale(1) brightness(1.8);
+}
+
+/* ---------------------- form controls, dark-scoped ---------------------- */
+
+/*
+  Bootstrap's default form styling assumes a light page: white inputs, dark
+  text, a muted grey for labels and hints. Because the whole auth page is now
+  dark, every one of those needs a matching dark-mode value. Scoped to
+  .bb-auth-card only, so nothing on the rest of the site is affected.
+*/
+
+.bb-auth-card .form-label {
+  color: var(--bb-text-on-dark);
+}
+
+.bb-auth-card .form-text {
+  color: var(--bb-muted-on-dark);
+}
+
+.bb-auth-card legend {
+  color: var(--bb-text-on-dark);
+}
+
+/* The required-field asterisk. Bootstrap's default text-danger red is tuned
+   for a white page; on this dark card we use gold instead, which is already
+   validated at 7.94:1 here and keeps the card to one accent colour rather
+   than introducing an untested red for a purely decorative mark. The
+   "(required)" text for screen readers is unaffected either way. */
+.bb-auth-card .text-danger {
+  color: var(--bb-gold) !important;
+}
+
+.bb-auth-card .form-control {
+  background-color: #0f0f10;
+  border-color: var(--bb-border-strong);
+  color: var(--bb-text-on-dark);
+}
+
+.bb-auth-card .form-control::placeholder {
+  color: var(--bb-muted-on-dark);
+  opacity: 0.7;
+}
+
+.bb-auth-card .form-control:focus {
+  background-color: #0f0f10;
+  border-color: var(--bb-gold);
+  color: var(--bb-text-on-dark);
+  box-shadow: 0 0 0 0.2rem rgba(212, 166, 60, 0.35);
+}
+
+.bb-auth-card .form-control:disabled {
+  background-color: #17171a;
+  color: var(--bb-muted-on-dark);
+}
+
+/*
+  The error message text. #ff8a80 measures 7.84:1 against the card
+  background and 8.39:1 against the input background -- both comfortably
+  past the 4.5:1 minimum, checked before use rather than guessed.
+*/
+.bb-auth-card .invalid-feedback {
+  color: #ff8a80;
+}
+
+.bb-auth-card .form-control.is-invalid {
+  border-color: #ff8a80;
+}
+
+.bb-auth-card .form-control.is-invalid:focus {
+  border-color: #ff8a80;
+  box-shadow: 0 0 0 0.2rem rgba(255, 138, 128, 0.3);
+}
+
+/* Field icons and the password toggle default to a colour meant for light
+   pages (see forms.css); override to the dark-page muted tone here. */
+.bb-auth-card .bb-field-icon,
+.bb-auth-card .bb-password-toggle {
+  color: var(--bb-muted-on-dark);
+}
+
+.bb-auth-card .bb-password-toggle:hover,
+.bb-auth-card .bb-password-toggle:focus-visible {
+  color: var(--bb-text-on-dark);
+}
+
+/* Radios and checkboxes (the customer/barber choice, the consent tick). */
+.bb-auth-card .form-check-input {
+  background-color: #0f0f10;
+  border-color: var(--bb-border-strong);
+}
+
+.bb-auth-card .form-check-input:checked {
+  background-color: var(--bb-gold);
+  border-color: var(--bb-gold);
+}
+
+.bb-auth-card .form-check-label,
+.bb-auth-card .form-check strong {
+  color: var(--bb-text-on-dark);
+}
+
+.bb-auth-card .form-check .text-muted {
+  color: var(--bb-muted-on-dark) !important;
+}
+
+/* ------------------------------- narrow -------------------------------- */
+
+@media (max-width: 480px) {
+  .bb-auth-page {
+    padding: 20px 12px;
+    align-items: flex-start;
+  }
+
+  .bb-auth-card-body {
+    padding: 22px 18px 20px;
+  }
+
+  .bb-auth-tab {
+    font-size: 0.85rem;
+    padding: 8px 6px;
+  }
+}

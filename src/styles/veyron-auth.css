@@ -1,0 +1,998 @@
+/* ==========================================================================
+   VEYRON — authentication
+
+   The split-screen shell, the form fields, the strength meter and the code
+   input. Depends on the tokens in veyron.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   SHELL
+   -------------------------------------------------------------------------- */
+
+.bb-auth {
+  display: grid;
+  min-height: 100vh;
+  /* Fall back to the page ground so no seam shows while fonts load. */
+  background-color: var(--v-bg);
+}
+
+@media (min-width: 992px) {
+  .bb-auth {
+    /* The brand panel is the smaller half. The form is what people came
+       for, so it gets the room. */
+    grid-template-columns: 0.85fr 1fr;
+  }
+
+  /* Flows with more to fill in (the barber's multi-step signup) give the
+     form even more of the width. */
+  .bb-auth-wide {
+    grid-template-columns: 0.7fr 1fr;
+  }
+}
+
+/* ---- brand panel ---- */
+
+.bb-auth-brand {
+  position: relative;
+  display: none;
+  overflow: hidden;
+  background-color: var(--v-sunken);
+  border-right: 1px solid var(--v-line);
+}
+
+@media (min-width: 992px) {
+  .bb-auth-brand { display: block; }
+}
+
+/* One faint warm wash, placed differently per flow so the three screens
+   are recognisably different without changing the palette. */
+.bb-auth-brand::before {
+  content: "";
+  position: absolute;
+  inset: -20% -30% auto -30%;
+  height: 90%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(200, 169, 106, 0.1),
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.bb-auth-brand-barber::before {
+  inset: auto -30% -25% -30%;
+  height: 85%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(200, 169, 106, 0.13),
+    transparent 62%
+  );
+}
+
+.bb-auth-brand-customer::before {
+  inset: -30% -20% auto -40%;
+}
+
+/* A single hairline rule running the height of the panel, a fixed distance
+   from the text. It is the only non-type element here: it gives the
+   composition a spine without becoming decoration. */
+.bb-auth-brand::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--v-7);
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--v-line-strong) 18%,
+    var(--v-line-strong) 82%,
+    transparent
+  );
+}
+
+.bb-auth-brand-inner {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--v-7) var(--v-6) var(--v-7) calc(var(--v-7) + var(--v-5));
+}
+
+.bb-auth-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--v-3);
+  font-size: var(--v-t-xs);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--v-text);
+  text-decoration: none;
+}
+
+.bb-auth-mark:hover { color: var(--v-text); }
+
+.bb-auth-eyebrow {
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--v-accent);
+  margin-bottom: var(--v-4);
+}
+
+.bb-auth-headline {
+  font-family: var(--v-serif);
+  font-size: clamp(2rem, 2.9vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--v-text);
+  margin-bottom: 0;
+}
+
+.bb-auth-headline span { display: block; }
+
+/* The index: plain statements of what the product does, set small and
+   tracked, each on its own hairline. Reads as a contents list rather than
+   a feature grid. */
+.bb-auth-index {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: bb-auth-index;
+}
+
+.bb-auth-index li {
+  counter-increment: bb-auth-index;
+  display: flex;
+  gap: var(--v-4);
+  padding-block: var(--v-3);
+  border-top: 1px solid var(--v-line);
+  font-size: var(--v-t-sm);
+  color: var(--v-text-dim);
+}
+
+.bb-auth-index li::before {
+  content: counter(bb-auth-index, decimal-leading-zero);
+  font-family: var(--v-mono);
+  font-size: var(--v-t-xs);
+  color: var(--v-accent);
+  padding-top: 2px;
+}
+
+/* ---- form side ---- */
+
+.bb-auth-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--v-6) var(--v-5);
+}
+
+@media (min-width: 992px) {
+  .bb-auth-panel { padding: var(--v-7) var(--v-7); }
+}
+
+.bb-auth-panel-inner {
+  width: 100%;
+  max-width: 27rem;
+}
+
+/* The barber flow's steps need more room than a login form. */
+.bb-auth-wide .bb-auth-panel-inner { max-width: 34rem; }
+
+.bb-auth-mark-mobile {
+  margin-bottom: var(--v-6);
+}
+
+@media (min-width: 992px) {
+  /* The brand panel already shows the mark on desktop. */
+  .bb-auth-mark-mobile { display: none; }
+}
+
+.bb-auth-title {
+  font-family: var(--v-serif);
+  font-size: var(--v-t-1);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--v-2);
+}
+
+.bb-auth-sub {
+  color: var(--v-text-dim);
+  margin-bottom: var(--v-6);
+}
+
+.bb-auth-foot {
+  margin-top: var(--v-6);
+  padding-top: var(--v-5);
+  border-top: 1px solid var(--v-line);
+}
+
+.bb-auth-foot-label {
+  font-size: var(--v-t-sm);
+  color: var(--v-text-dim);
+  margin-bottom: var(--v-4);
+}
+
+/* --------------------------------------------------------------------------
+   FIELDS
+   -------------------------------------------------------------------------- */
+
+.bb-authfield { margin-bottom: var(--v-4); }
+
+.bb-authfield-label {
+  display: block;
+  font-size: var(--v-t-sm);
+  font-weight: 600;
+  color: var(--v-text);
+  margin-bottom: var(--v-2);
+}
+
+.bb-authfield-required {
+  color: var(--v-accent);
+  margin-left: 2px;
+}
+
+.bb-authfield-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--v-sunken);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.bb-authfield-control.is-textarea { align-items: flex-start; }
+
+/* focus-within, not :focus, so the whole control lights up when the input
+   inside it is focused -- the border is what the person sees, not the
+   input element itself. */
+.bb-authfield-control:focus-within {
+  border-color: var(--v-accent);
+}
+
+.bb-authfield-control.is-invalid {
+  border-color: var(--v-bad);
+}
+
+.bb-authfield-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  flex: 0 0 auto;
+  color: var(--v-text-dim);
+}
+
+.bb-authfield-control.is-textarea .bb-authfield-icon { padding-top: 12px; }
+
+.bb-authfield-input {
+  flex: 1;
+  min-width: 0;
+  /* 44px total height: the minimum comfortable touch target. */
+  padding: 0.7rem 0.85rem;
+  background: transparent;
+  border: 0;
+  color: var(--v-text);
+  font-size: var(--v-t-body);
+  font-family: inherit;
+  resize: vertical;
+}
+
+.bb-authfield-control.has-icon .bb-authfield-input { padding-left: 0; }
+.bb-authfield-control.has-toggle .bb-authfield-input { padding-right: 0; }
+
+/* The control already draws the focus state, so a second ring on the bare
+   input inside it would be a box within a box. */
+.bb-authfield-input:focus { outline: none; }
+
+.bb-authfield-input::placeholder {
+  color: var(--v-text-dim);
+  opacity: 1;
+}
+
+.bb-authfield-input:disabled {
+  color: var(--v-text-dim);
+  cursor: not-allowed;
+}
+
+.bb-authfield-toggle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  background: transparent;
+  border: 0;
+  color: var(--v-text-dim);
+  border-radius: var(--v-radius);
+  transition: color 160ms ease;
+}
+
+.bb-authfield-toggle:hover { color: var(--v-text); }
+
+.bb-authfield-hint {
+  font-size: var(--v-t-xs);
+  color: var(--v-text-dim);
+  margin: var(--v-2) 0 0;
+}
+
+.bb-authfield-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--v-2);
+  font-size: var(--v-t-xs);
+  color: var(--v-bad);
+  margin: var(--v-2) 0 0;
+}
+
+.bb-authfield-error svg { flex: 0 0 auto; margin-top: 1px; }
+
+/* --------------------------------------------------------------------------
+   CHECKBOX ROW
+   -------------------------------------------------------------------------- */
+
+.bb-check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--v-3);
+  margin-bottom: var(--v-5);
+  font-size: var(--v-t-sm);
+  color: var(--v-text-dim);
+  cursor: pointer;
+}
+
+/* Inside the remember-me row on LoginPage, the ROW already carries this
+   gap (see .bb-check-row below) -- without this override the two would
+   stack, doubling the space under it. */
+.bb-check-row .bb-check {
+  margin-bottom: 0;
+}
+
+.bb-check input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--v-accent);
+  cursor: pointer;
+}
+
+.bb-check a {
+  color: var(--v-accent-bright);
+  text-decoration: underline;
+}
+
+.bb-check-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--v-3);
+  margin-bottom: var(--v-5);
+}
+
+/* --------------------------------------------------------------------------
+   PASSWORD STRENGTH
+   -------------------------------------------------------------------------- */
+
+.bb-strength {
+  margin-top: var(--v-3);
+  margin-bottom: var(--v-4);
+}
+
+.bb-strength-row {
+  display: flex;
+  align-items: center;
+  gap: var(--v-3);
+  margin-bottom: var(--v-3);
+}
+
+.bb-strength-meter {
+  display: flex;
+  gap: 3px;
+  flex: 1;
+}
+
+/* Discrete segments, so the level is readable from the FILLED COUNT and
+   not only from the colour. */
+.bb-strength-segment {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background-color: var(--v-line-strong);
+  transition: background-color 200ms ease;
+}
+
+.bb-strength-segment.is-filled { background-color: currentColor; }
+
+.bb-strength-label {
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  min-width: 4.5rem;
+  text-align: right;
+}
+
+.bb-strength-danger { color: var(--v-bad); }
+.bb-strength-warn { color: #d9915f; }
+.bb-strength-fair { color: var(--v-warn); }
+.bb-strength-good { color: #9fc4a8; }
+.bb-strength-strong { color: var(--v-ok); }
+
+.bb-strength-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 2px;
+}
+
+@media (min-width: 420px) {
+  .bb-strength-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px var(--v-4);
+  }
+}
+
+.bb-strength-item {
+  display: flex;
+  align-items: center;
+  gap: var(--v-2);
+  font-size: var(--v-t-xs);
+  color: var(--v-text-dim);
+}
+
+.bb-strength-item svg { flex: 0 0 auto; }
+
+.bb-strength-item.is-met { color: var(--v-ok); }
+
+/* --------------------------------------------------------------------------
+   ALERTS
+   -------------------------------------------------------------------------- */
+
+.bb-auth-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--v-3);
+  padding: var(--v-3) var(--v-4);
+  border-radius: var(--v-radius);
+  border: 1px solid;
+  font-size: var(--v-t-sm);
+  margin-bottom: var(--v-5);
+}
+
+.bb-auth-alert svg { flex: 0 0 auto; margin-top: 2px; }
+
+.bb-auth-alert-error {
+  color: var(--v-bad);
+  border-color: color-mix(in srgb, var(--v-bad) 40%, transparent);
+  background-color: color-mix(in srgb, var(--v-bad) 10%, transparent);
+}
+
+.bb-auth-alert-success {
+  color: var(--v-ok);
+  border-color: color-mix(in srgb, var(--v-ok) 40%, transparent);
+  background-color: color-mix(in srgb, var(--v-ok) 10%, transparent);
+}
+
+/* Older browsers without color-mix get the border and text colour above,
+   which is enough on its own. */
+@supports not (background: color-mix(in srgb, red 50%, blue)) {
+  .bb-auth-alert-error,
+  .bb-auth-alert-success { background-color: var(--v-surface); }
+}
+
+/* --------------------------------------------------------------------------
+   SUBMIT
+   -------------------------------------------------------------------------- */
+
+.bb-auth-submit {
+  width: 100%;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--v-2);
+  padding: 0.7rem 1.2rem;
+  font-size: var(--v-t-sm);
+  font-weight: 600;
+  color: var(--v-bg);
+  background-color: var(--v-accent);
+  border: 1px solid var(--v-accent);
+  border-radius: var(--v-radius);
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.bb-auth-submit:hover:not(:disabled) {
+  background-color: var(--v-accent-bright);
+  border-color: var(--v-accent-bright);
+}
+
+.bb-auth-submit:disabled {
+  background-color: var(--v-accent-deep);
+  border-color: var(--v-accent-deep);
+  cursor: not-allowed;
+}
+
+.bb-auth-submit:focus-visible {
+  outline: 2px solid var(--v-bg);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 4px var(--v-accent-bright);
+}
+
+/* The Loader2 spinner from the supplied form. Reduced motion is honoured
+   by the global rule in veyron.css, which stops the rotation -- the button
+   still reads "Signing in..." so the state is never lost. */
+.bb-spin { animation: bb-spin 900ms linear infinite; }
+
+@keyframes bb-spin {
+  to { transform: rotate(360deg); }
+}
+
+.bb-auth-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: var(--v-t-sm);
+  font-weight: 600;
+  color: var(--v-accent-bright);
+  text-decoration: none;
+}
+
+.bb-auth-link:hover { color: var(--v-accent); text-decoration: underline; }
+
+/* --------------------------------------------------------------------------
+   ROUTE CHOICE CARDS
+
+   The entry screen, and the "don't have an account?" pair under sign in.
+   Separate destinations, deliberately NOT a dropdown -- picking what you
+   are is a fork in the journey, not a form field.
+   -------------------------------------------------------------------------- */
+
+.bb-auth-choices {
+  display: grid;
+  gap: var(--v-3);
+}
+
+.bb-choice {
+  display: flex;
+  align-items: center;
+  gap: var(--v-4);
+  padding: var(--v-4);
+  text-align: left;
+  text-decoration: none;
+  background-color: var(--v-surface);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius-lg);
+  transition: border-color 180ms ease, background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.bb-choice:hover {
+  border-color: var(--v-line-bright);
+  background-color: var(--v-elevated);
+  transform: translateY(-1px);
+}
+
+/* The barber route is the professional path and is marked as the more
+   deliberate one -- an accent edge rather than a different shape, so the
+   two still read as one set. */
+.bb-choice-pro {
+  border-color: color-mix(in srgb, var(--v-accent) 45%, var(--v-line-strong));
+}
+
+.bb-choice-pro:hover {
+  border-color: var(--v-accent);
+}
+
+.bb-choice-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  color: var(--v-accent);
+  background-color: var(--v-elevated);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+}
+
+/* The card’s text is built from <span>s, because the whole card is an
+   <a> and a <p> or heading inside a link is invalid HTML. Spans are
+   inline by default, so without this the title and the description run
+   together on one line. */
+.bb-choice-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bb-choice-title {
+  display: block;
+  font-size: var(--v-t-body);
+  font-weight: 600;
+  color: var(--v-text);
+  margin-bottom: 2px;
+}
+
+.bb-choice-text {
+  display: block;
+  font-size: var(--v-t-sm);
+  line-height: 1.45;
+  color: var(--v-text-dim);
+  margin-bottom: 0;
+}
+
+.bb-choice-arrow {
+  margin-left: auto;
+  flex: 0 0 auto;
+  color: var(--v-text-dim);
+}
+
+.bb-choice:hover .bb-choice-arrow { color: var(--v-accent); }
+
+/* --------------------------------------------------------------------------
+   CODE INPUT
+
+   One field, letter-spaced so it still reads as six characters. See
+   VerificationCodeInput.js for why this is not six separate boxes.
+   -------------------------------------------------------------------------- */
+
+.bb-code-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  text-align: center;
+  font-family: var(--v-mono);
+  font-size: 1.7rem;
+  letter-spacing: 0.5em;
+  /* The letter-spacing adds a trailing gap after the last character, which
+     pushes the text visually off-centre. This pulls it back. */
+  text-indent: 0.5em;
+  color: var(--v-text);
+  background-color: var(--v-sunken);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+  transition: border-color 160ms ease;
+}
+
+.bb-code-input:focus {
+  outline: none;
+  border-color: var(--v-accent);
+}
+
+.bb-code-input.is-invalid { border-color: var(--v-bad); }
+
+.bb-code-input::placeholder {
+  color: var(--v-text-dim);
+  letter-spacing: 0.5em;
+}
+
+.bb-auth-resend {
+  margin-top: var(--v-5);
+  text-align: center;
+  font-size: var(--v-t-sm);
+}
+
+.bb-auth-resend p { margin-bottom: 0; }
+
+/* --------------------------------------------------------------------------
+   BADGES AND SUCCESS
+   -------------------------------------------------------------------------- */
+
+.bb-auth-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: var(--v-5);
+  color: var(--v-accent);
+  background-color: var(--v-surface);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+}
+
+.bb-auth-success { text-align: center; }
+
+.bb-auth-success-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: var(--v-5);
+  color: var(--v-ok);
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.bb-auth-success .bb-auth-sub { margin-inline: auto; }
+
+/* An informational alert -- neither an error nor a success. Used on the
+   barber review step to state the approval requirement plainly. */
+.bb-auth-alert-info {
+  color: var(--v-text-dim);
+  border-color: var(--v-line-strong);
+  background-color: var(--v-surface);
+}
+
+/* --------------------------------------------------------------------------
+   FIELDSETS
+   -------------------------------------------------------------------------- */
+
+.bb-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 var(--v-5);
+  min-width: 0;
+}
+
+.bb-legend {
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v-text-dim);
+  padding: 0 0 var(--v-3);
+  margin-bottom: var(--v-4);
+  border-bottom: 1px solid var(--v-line);
+  width: 100%;
+}
+
+.bb-mt-5 { margin-top: var(--v-5); }
+
+/* --------------------------------------------------------------------------
+   STEP INDICATOR
+
+   A subtle numbered index, not a large progress bar.
+   -------------------------------------------------------------------------- */
+
+.bb-steps-indicator {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--v-2) var(--v-4);
+  list-style: none;
+  padding: 0 0 var(--v-4);
+  margin: 0 0 var(--v-5);
+  border-bottom: 1px solid var(--v-line);
+}
+
+.bb-step-chip {
+  display: flex;
+  align-items: baseline;
+  gap: var(--v-2);
+  font-size: var(--v-t-xs);
+  color: var(--v-text-dim);
+}
+
+.bb-step-chip-num {
+  font-family: var(--v-mono);
+  color: var(--v-text-dim);
+}
+
+/* The current step is marked by colour AND weight, so it is not colour
+   alone doing the work. */
+.bb-step-chip.is-current { color: var(--v-text); font-weight: 600; }
+.bb-step-chip.is-current .bb-step-chip-num { color: var(--v-accent); }
+.bb-step-chip.is-done .bb-step-chip-num { color: var(--v-ok); }
+
+.bb-step-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--v-3);
+  margin-top: var(--v-5);
+}
+
+/* The forward action keeps its full width; Back is secondary and sized to
+   its text. */
+.bb-step-nav .bb-auth-submit { flex: 1; }
+
+.bb-auth-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--v-2);
+  min-height: 46px;
+  padding: 0.7rem 1rem;
+  font-size: var(--v-t-sm);
+  font-weight: 600;
+  color: var(--v-text);
+  background: transparent;
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.bb-auth-back:hover {
+  border-color: var(--v-line-bright);
+  background-color: var(--v-surface);
+}
+
+/* --------------------------------------------------------------------------
+   SPECIALTY CHIPS
+
+   Real checkboxes, visually hidden, with the label doing the drawing. The
+   input keeps the keyboard and screen-reader behaviour a div could not.
+   -------------------------------------------------------------------------- */
+
+.bb-chipset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 var(--v-4);
+  min-width: 0;
+}
+
+.bb-authfield-hint-inline {
+  display: block;
+  font-size: var(--v-t-xs);
+  font-weight: 400;
+  color: var(--v-text-dim);
+  margin-top: 2px;
+}
+
+.bb-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--v-2);
+  margin-top: var(--v-3);
+}
+
+.bb-chip {
+  padding: 0.4rem 0.8rem;
+  font-size: var(--v-t-sm);
+  color: var(--v-text-dim);
+  background-color: var(--v-sunken);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease,
+    background-color 160ms ease;
+}
+
+.bb-chip:hover { border-color: var(--v-line-bright); color: var(--v-text); }
+
+/* Selected state is a filled accent edge plus the brighter text -- two
+   signals, not just a colour swap. */
+.bb-chip.is-on {
+  color: var(--v-accent-bright);
+  border-color: var(--v-accent);
+  background-color: color-mix(in srgb, var(--v-accent) 12%, var(--v-sunken));
+}
+
+/* The input is visually hidden, so the ring has to be drawn on the label. */
+.bb-chip:focus-within {
+  outline: 2px solid var(--v-accent-bright);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   REVIEW LIST
+   -------------------------------------------------------------------------- */
+
+.bb-review {
+  margin: 0 0 var(--v-5);
+  display: grid;
+  gap: 0;
+}
+
+.bb-review > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--v-3);
+  justify-content: space-between;
+  padding-block: var(--v-3);
+  border-bottom: 1px solid var(--v-line);
+}
+
+.bb-review dt {
+  font-size: var(--v-t-sm);
+  font-weight: 500;
+  color: var(--v-text-dim);
+}
+
+.bb-review dd {
+  margin: 0;
+  font-size: var(--v-t-sm);
+  color: var(--v-text);
+  text-align: right;
+  /* Long values wrap instead of forcing the panel wider. */
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* --------------------------------------------------------------------------
+   GOOGLE SIGN-IN
+
+   Google's own button (see GoogleSignInButton.js for why it is not a
+   custom one) plus the "or" divider that separates it from the form below.
+   -------------------------------------------------------------------------- */
+
+.bb-google-signin {
+  margin-bottom: var(--v-5);
+  /* Google's button reports its own width; centring the wrapper keeps it
+     tidy if that width ends up narrower than the form column. */
+  display: flex;
+  justify-content: center;
+}
+
+.bb-google-signin-error {
+  margin-top: var(--v-2);
+  text-align: center;
+  font-size: var(--v-t-xs);
+}
+
+.bb-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--v-4);
+  margin-bottom: var(--v-5);
+  color: var(--v-text-dim);
+  font-size: var(--v-t-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bb-auth-divider::before,
+.bb-auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--v-line);
+}
+
+/* --------------------------------------------------------------------------
+   LOCATION FIELD
+
+   City/region suggestions (see LocationField.js and
+   server/controllers/geocodeController.js). The suggestion list floats
+   below the input; the status line underneath states plainly whether the
+   location is a confirmed map point or just typed text -- never implying
+   more certainty than actually exists.
+   -------------------------------------------------------------------------- */
+
+.bb-location-suggestions {
+  position: relative;
+  z-index: 5;
+  margin: 2px 0 0;
+  padding: var(--v-2);
+  list-style: none;
+  background-color: var(--v-elevated);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+  box-shadow: var(--v-shadow);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.bb-location-suggestion {
+  display: block;
+  width: 100%;
+  padding: var(--v-2) var(--v-3);
+  text-align: left;
+  font-size: var(--v-t-sm);
+  color: var(--v-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--v-radius);
+}
+
+.bb-location-suggestion:hover,
+.bb-location-suggestion:focus-visible {
+  background-color: var(--v-surface);
+  color: var(--v-accent-bright);
+}
+
+.bb-location-status {
+  margin: var(--v-2) 0 0;
+  font-size: var(--v-t-xs);
+  color: var(--v-text-dim);
+  display: flex;
+  align-items: center;
+  gap: var(--v-2);
+}
+
+.bb-location-confirmed {
+  color: var(--v-ok);
+}

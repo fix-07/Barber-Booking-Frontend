@@ -1,0 +1,87 @@
+/* ==========================================================================
+   VEYRON — compatibility bridge
+
+   TEMPORARY, AND MEANT TO SHRINK.
+
+   The pages that have been rebuilt on the new system (the homepage, the
+   shell, the authentication screens) use the --v-* tokens in veyron.css
+   directly. The pages that have NOT been rebuilt yet -- the admin panel,
+   the booking picker, the barber and customer dashboards -- are still
+   written against the OLD --bb-* token names from theme.css, which nothing
+   imports any more.
+
+   Without this file those pages render with every colour undefined: the
+   admin panel comes out as unstyled black-on-black text with a
+   full-viewport SVG where its logo should be. That is not "plain but
+   readable", it is broken.
+
+   So this maps each old name onto its closest new equivalent. The old
+   stylesheets then work unchanged, in the NEW palette, until each page
+   gets its own pass -- at which point its token references get replaced
+   with --v-* names and the corresponding lines here can be deleted.
+
+   THIS IS NOT theme.css COMING BACK. theme.css also set page backgrounds,
+   type and component styles, which is what the new system replaces. This
+   file defines nothing but variable aliases: no selectors, no layout, no
+   opinions. If a rule looks wrong on an old page, the fix belongs in that
+   page's rebuild, not here.
+   ========================================================================== */
+
+:root {
+  /* ---- ground and ink -------------------------------------------------
+     The old system was a light customer site with dark chrome, so
+     --bb-ink meant "dark text on white". Everything is dark now, so ink
+     maps to the light primary text instead. That inversion is the whole
+     reason the old sheets keep working without being edited. */
+  --bb-black: var(--v-bg);
+  --bb-surface: var(--v-surface);
+  --bb-surface-raised: var(--v-elevated);
+
+  --bb-ink: var(--v-text);
+  --bb-ink-muted: var(--v-text-dim);
+  --bb-text-on-dark: var(--v-text);
+  --bb-muted-on-dark: var(--v-text-dim);
+
+  /* ---- ink for surfaces that stayed light --------------------------
+     admin.css and appointment-picker.css both still paint a few of their
+     own surfaces an explicit white/off-white (the admin topbar, the
+     booking calendar, the time-slot list) rather than the new dark
+     ground -- that was a deliberate "light content area" choice, not an
+     unconverted leftover. --bb-ink above is remapped to light text for
+     the (now dark) Bootstrap Cards/Tables surrounding them, so text that
+     is genuinely sitting on one of those white surfaces needs its own,
+     still-dark, ink -- otherwise it is light text on a light background. */
+  --bb-ink-on-light: #16161a;
+  --bb-ink-muted-on-light: #55555f;
+
+  /* ---- accent ----------------------------------------------------------
+     The old gold was #D4A63C. The new bronze is the measured #C8A96A --
+     8.76:1 on the page ground, and 8.76:1 the other way for near-black
+     text sitting on a bronze button. */
+  --bb-gold: var(--v-accent);
+  --bb-gold-hover: var(--v-accent-bright);
+  --bb-gold-ink: var(--v-bg);
+
+  /* ---- lines ---------------------------------------------------------- */
+  --bb-border-dark: var(--v-line);
+  --bb-border-strong: var(--v-line-strong);
+
+  /* ---- status --------------------------------------------------------- */
+  --bb-success-ink: var(--v-ok);
+  --bb-danger-ink: var(--v-bad);
+
+  /* ---- type ----------------------------------------------------------- */
+  --bb-font-display: var(--v-serif);
+
+  /* ---- spacing --------------------------------------------------------
+     The old scale had eight steps; the new one has nine. These line up on
+     the values that existed in both. */
+  --bb-space-1: var(--v-1);
+  --bb-space-2: var(--v-2);
+  --bb-space-3: var(--v-3);
+  --bb-space-4: var(--v-4);
+  --bb-space-5: var(--v-5);
+  --bb-space-6: var(--v-6);
+  --bb-space-7: var(--v-7);
+  --bb-space-8: var(--v-8);
+}

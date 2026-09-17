@@ -1,0 +1,575 @@
+/* ==========================================================================
+   VEYRON — design system
+
+   A fresh visual language, written from scratch. The previous theme.css is
+   still on disk and in _backup-20260915-134042/, but nothing imports it any
+   more: this file replaces it rather than layering on top, so there is one
+   place that decides how the product looks.
+
+   FOUNDATION: dark. Not "dark mode" as an alternative to a light default —
+   dark IS the product. Near-black ground, warm off-white type, one bronze
+   accent used sparingly enough that it still means something when it
+   appears.
+
+   CONTRAST, measured not guessed (WCAG 2.1 ratios):
+     #F3F0E8 on #0B0B0A ....... 17.29:1   primary text
+     #F3F0E8 on #141413 ....... 16.19:1   primary text on a surface
+     #9A9890 on #0B0B0A ........ 6.81:1   secondary text
+     #9A9890 on #141413 ........ 6.38:1   secondary text on a surface
+     #C8A96A on #0B0B0A ........ 8.76:1   accent as text
+     #0B0B0A on #C8A96A ........ 8.76:1   text on an accent button
+     #7A7872 on #0B0B0A ........ 4.46:1   BORDERS ONLY — below 4.5, never text
+
+   WHAT THIS FILE REFUSES TO DO, because the brief asks for a product and not
+   a template: no purple, no glassmorphism, no pill buttons, no emoji as
+   icons, no cursor effects, no decorative motion. Every accent placement is
+   deliberate.
+   ========================================================================== */
+
+:root {
+  /* Tells the browser this page is dark, so NATIVE form-control chrome
+     (a time/date input's empty "--:--" segments and calendar-icon glyph,
+     number-input spinner arrows, the default scrollbar) draws itself in
+     dark-appropriate colours instead of assuming a light page. Without
+     this, those native pieces render with their light-mode glyph colour
+     on our dark input backgrounds and become almost unreadable -- CSS
+     `color` on the input only styles text actually typed in, not this
+     native chrome. */
+  color-scheme: dark;
+
+  /* ---- ground ---------------------------------------------------------- */
+  --v-bg: #0b0b0a;
+  --v-surface: #141413;
+  --v-elevated: #1b1b19;
+  --v-sunken: #0e0e0d;
+
+  /* ---- ink ------------------------------------------------------------- */
+  --v-text: #f3f0e8;
+  --v-text-dim: #9a9890;
+
+  /* ---- accent ----------------------------------------------------------
+     One bronze, two weights. The bright one is for text and hairlines on
+     dark; the solid one carries buttons, where near-black type sits on top
+     of it. */
+  --v-accent: #c8a96a;
+  --v-accent-bright: #e0c89a;
+  --v-accent-deep: #a8873f;
+
+  /* ---- lines -----------------------------------------------------------
+     Warm greys, deliberately low contrast. A border that shouts is a border
+     you notice instead of the content it frames. */
+  --v-line: #26261f;
+  --v-line-strong: #3a3a33;
+  --v-line-bright: #7a7872;
+
+  /* ---- status ----------------------------------------------------------
+     Desaturated to sit inside a dark, warm interface rather than fighting
+     it. Each is used with a word, never as the only signal. */
+  --v-ok: #86c39a;
+  --v-warn: #dcb45f;
+  --v-bad: #e28b7d;
+
+  /* ---- type ------------------------------------------------------------
+     System fonts only. Nothing is downloaded, so no request reaches another
+     company and the Cookie Policy's "loads nothing from a third party"
+     claim stays true. The serif carries display sizes; the sans carries
+     everything you actually read at length. */
+  --v-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+    "Times New Roman", serif;
+  --v-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --v-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* A 1.24 scale, clamped so headings shrink on a phone without a media
+     query each. */
+  --v-t-hero: clamp(2.9rem, 6.4vw, 5.25rem);
+  --v-t-1: clamp(2.1rem, 3.8vw, 3.1rem);
+  --v-t-2: clamp(1.6rem, 2.4vw, 2.1rem);
+  --v-t-3: 1.3rem;
+  --v-t-4: 1.075rem;
+  --v-t-body: 1rem;
+  --v-t-sm: 0.905rem;
+  --v-t-xs: 0.79rem;
+
+  /* ---- space ----------------------------------------------------------- */
+  --v-1: 0.25rem;
+  --v-2: 0.5rem;
+  --v-3: 0.75rem;
+  --v-4: 1rem;
+  --v-5: 1.5rem;
+  --v-6: 2.25rem;
+  --v-7: 3.5rem;
+  --v-8: 5rem;
+  --v-9: 7.5rem;
+
+  --v-radius: 4px;
+  --v-radius-lg: 8px;
+
+  /* On a dark ground a drop shadow does almost nothing — depth has to come
+     from surface lightness and a hairline instead. These are used sparingly
+     and stay subtle on purpose. */
+  --v-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.45);
+
+  /* ---- Bootstrap bridge ------------------------------------------------
+     react-bootstrap supplies the BEHAVIOUR this app relies on (modal focus
+     trapping, dropdown positioning, form validation states). Bootstrap 5.3
+     builds its components from these variables, so re-pointing them is what
+     stops those components looking like Bootstrap while keeping everything
+     they do. */
+  --bs-body-bg: var(--v-bg);
+  --bs-body-color: var(--v-text);
+  --bs-body-font-family: var(--v-sans);
+  --bs-secondary-color: var(--v-text-dim);
+  --bs-emphasis-color: var(--v-text);
+  --bs-border-color: var(--v-line);
+  --bs-link-color: var(--v-accent-bright);
+  --bs-link-hover-color: var(--v-accent);
+  --bs-border-radius: var(--v-radius);
+  --bs-border-radius-lg: var(--v-radius-lg);
+  --bs-focus-ring-color: var(--v-accent);
+}
+
+/* --------------------------------------------------------------------------
+   BASE
+   -------------------------------------------------------------------------- */
+
+body {
+  background-color: var(--v-bg);
+  color: var(--v-text);
+  font-family: var(--v-sans);
+  font-size: var(--v-t-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  /* Stops a long email address or shop name breaking the layout on a phone. */
+  overflow-wrap: break-word;
+}
+
+::selection {
+  background-color: var(--v-accent);
+  color: var(--v-bg);
+}
+
+/* --------------------------------------------------------------------------
+   TYPE
+
+   The serif is the brand's voice and appears at display sizes only. Below
+   ~1.3rem a serif starts reading as fussy rather than considered, so h4 and
+   smaller stay in the sans.
+   -------------------------------------------------------------------------- */
+
+h1,
+h2,
+h3 {
+  font-family: var(--v-serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  color: var(--v-text);
+}
+
+h1 { font-size: var(--v-t-1); }
+h2 { font-size: var(--v-t-2); }
+h3 { font-size: var(--v-t-3); }
+
+h4,
+h5,
+h6 {
+  font-family: var(--v-sans);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--v-text);
+}
+
+h4 { font-size: var(--v-t-4); }
+h5 { font-size: var(--v-t-body); }
+h6 { font-size: var(--v-t-sm); }
+
+p { color: var(--v-text); }
+
+/* Bootstrap's alert/dropdown/toast/popover components already pick a
+   correctly-paired text colour for their own (often light, subtle)
+   background via --bs-alert-color etc. -- see Alert.js's contrast note.
+   The plain `p` rule above has higher specificity than that inherited
+   colour, so a <p> nested inside one of these silently overrides it back
+   to the page's ambient light text -- invisible on their light "subtle"
+   backgrounds. Handing the colour back to whatever the component computed
+   fixes every current and future alert with paragraph content in one
+   place, rather than each page overriding it individually. */
+.alert p,
+.dropdown-menu p,
+.toast p,
+.popover p {
+  color: inherit;
+}
+
+.v-dim { color: var(--v-text-dim) !important; }
+.v-accent { color: var(--v-accent-bright) !important; }
+
+/* An overline label: small, tracked out, always paired with a heading
+   underneath. Structure, never a claim — it states a section name, never a
+   number or a status. */
+.v-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--v-3);
+  margin-bottom: var(--v-3);
+  font-family: var(--v-sans);
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--v-accent);
+}
+
+.v-eyebrow::before {
+  content: "";
+  width: 26px;
+  height: 1px;
+  background-color: currentColor;
+}
+
+/* Display size, for the one headline that opens a page. */
+.v-display {
+  font-family: var(--v-serif);
+  font-size: var(--v-t-hero);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.028em;
+}
+
+.v-lede {
+  font-size: var(--v-t-4);
+  color: var(--v-text-dim);
+  max-width: 52ch;
+}
+
+/* --------------------------------------------------------------------------
+   LAYOUT
+   -------------------------------------------------------------------------- */
+
+.v-wrap {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: var(--v-5);
+}
+
+@media (max-width: 575.98px) {
+  .v-wrap { padding-inline: var(--v-4); }
+}
+
+.v-section {
+  padding-block: var(--v-7);
+}
+
+@media (min-width: 992px) {
+  .v-section { padding-block: var(--v-8); }
+}
+
+/* A hairline that spans the content column, for separating sections without
+   a heavy rule. */
+.v-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--v-line-strong),
+    var(--v-line) 60%,
+    transparent
+  );
+  border: 0;
+  margin: 0;
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   SURFACES
+
+   Depth on a dark ground comes from lightness plus a hairline, not shadow.
+   Three levels, and a card only moves up a level when it genuinely sits on
+   top of something.
+   -------------------------------------------------------------------------- */
+
+.v-surface {
+  background-color: var(--v-surface);
+  border: 1px solid var(--v-line);
+  border-radius: var(--v-radius-lg);
+}
+
+.v-elevated {
+  background-color: var(--v-elevated);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius-lg);
+  box-shadow: var(--v-shadow);
+}
+
+.v-pad { padding: var(--v-5); }
+.v-pad-lg { padding: var(--v-6); }
+
+/* For a surface that is genuinely a link to somewhere. Not applied to every
+   card: animating something that does not respond to a click advertises an
+   interaction that does not exist. */
+.v-interactive {
+  transition: border-color 180ms ease, background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.v-interactive:hover {
+  border-color: var(--v-line-bright);
+  background-color: var(--v-elevated);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   BUTTONS
+
+   Three ranks and no more: solid accent for the one action a screen wants
+   you to take, outline for everything else, quiet for tertiary. Never a
+   pill — the radius stays at the product's own 4px.
+   -------------------------------------------------------------------------- */
+
+.btn {
+  --bs-btn-border-radius: var(--v-radius);
+  font-family: var(--v-sans);
+  font-size: var(--v-t-sm);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 0.68rem 1.15rem;
+  border-radius: var(--v-radius);
+  transition: background-color 160ms ease, border-color 160ms ease,
+    color 160ms ease;
+}
+
+/* 44px minimum target, the size assistive-technology guidance recommends.
+   Small buttons keep their own size because they sit in dense table rows
+   where 44px would be unusable. */
+.btn:not(.btn-sm) {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--v-2);
+}
+
+.btn-primary {
+  --bs-btn-color: var(--v-bg);
+  --bs-btn-bg: var(--v-accent);
+  --bs-btn-border-color: var(--v-accent);
+  --bs-btn-hover-color: var(--v-bg);
+  --bs-btn-hover-bg: var(--v-accent-bright);
+  --bs-btn-hover-border-color: var(--v-accent-bright);
+  --bs-btn-active-color: var(--v-bg);
+  --bs-btn-active-bg: var(--v-accent-deep);
+  --bs-btn-active-border-color: var(--v-accent-deep);
+  --bs-btn-disabled-color: var(--v-bg);
+  --bs-btn-disabled-bg: var(--v-accent-deep);
+  --bs-btn-disabled-border-color: var(--v-accent-deep);
+}
+
+.btn-outline-light,
+.btn-outline-dark,
+.btn-outline-secondary {
+  --bs-btn-color: var(--v-text);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--v-line-strong);
+  --bs-btn-hover-color: var(--v-bg);
+  --bs-btn-hover-bg: var(--v-text);
+  --bs-btn-hover-border-color: var(--v-text);
+  --bs-btn-active-color: var(--v-bg);
+  --bs-btn-active-bg: var(--v-text);
+  --bs-btn-active-border-color: var(--v-text);
+}
+
+.btn-outline-danger {
+  --bs-btn-color: var(--v-bad);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--v-bad);
+  --bs-btn-hover-color: var(--v-bg);
+  --bs-btn-hover-bg: var(--v-bad);
+  --bs-btn-hover-border-color: var(--v-bad);
+  --bs-btn-active-color: var(--v-bg);
+  --bs-btn-active-bg: var(--v-bad);
+}
+
+.btn-link {
+  --bs-btn-color: var(--v-accent-bright);
+  --bs-btn-hover-color: var(--v-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   FOCUS
+
+   The single most important rule here. Someone navigating by keyboard has
+   no cursor; this ring is the only thing telling them where they are.
+   Never remove it.
+   -------------------------------------------------------------------------- */
+
+*:focus-visible {
+  outline: 2px solid var(--v-accent-bright);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Bronze on bronze would be invisible, so an accent button takes a dark ring
+   with a bright halo instead. */
+.btn-primary:focus-visible {
+  outline: 2px solid var(--v-bg);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 4px var(--v-accent-bright);
+}
+
+/* --------------------------------------------------------------------------
+   FORMS
+   -------------------------------------------------------------------------- */
+
+.form-control,
+.form-select {
+  background-color: var(--v-sunken);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+  color: var(--v-text);
+  padding: 0.65rem 0.85rem;
+  font-size: var(--v-t-body);
+  min-height: 44px;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--v-sunken);
+  border-color: var(--v-accent);
+  color: var(--v-text);
+  box-shadow: none;
+}
+
+.form-control::placeholder {
+  color: var(--v-text-dim);
+  opacity: 1;
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  background-color: var(--v-surface);
+  color: var(--v-text-dim);
+}
+
+.form-label {
+  font-size: var(--v-t-sm);
+  font-weight: 600;
+  color: var(--v-text);
+  margin-bottom: var(--v-2);
+}
+
+.form-text {
+  color: var(--v-text-dim);
+  font-size: var(--v-t-xs);
+}
+
+.form-check-input {
+  background-color: var(--v-sunken);
+  border-color: var(--v-line-strong);
+}
+
+.form-check-input:checked {
+  background-color: var(--v-accent);
+  border-color: var(--v-accent);
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--v-bad);
+}
+
+.invalid-feedback {
+  color: var(--v-bad);
+  font-size: var(--v-t-xs);
+}
+
+/* --------------------------------------------------------------------------
+   STATUS PILLS
+
+   Colour is a hint and never the message: each one spells its status out as
+   a word, so it survives greyscale, colour blindness, printing, and being
+   read aloud.
+   -------------------------------------------------------------------------- */
+
+.v-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--v-2);
+  padding: 0.18rem 0.55rem;
+  border: 1px solid currentColor;
+  border-radius: var(--v-radius);
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background-color: transparent;
+}
+
+.v-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.v-status-ok { color: var(--v-ok); }
+.v-status-warn { color: var(--v-warn); }
+.v-status-bad { color: var(--v-bad); }
+.v-status-mute { color: var(--v-text-dim); }
+
+/* --------------------------------------------------------------------------
+   SKIP LINK
+   Lets a keyboard user jump past the nav. Hidden until focused.
+   -------------------------------------------------------------------------- */
+
+.bb-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 1080;
+  padding: var(--v-3) var(--v-4);
+  background-color: var(--v-accent);
+  color: var(--v-bg);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 var(--v-radius) 0;
+}
+
+.bb-skip-link:focus {
+  left: 0;
+  color: var(--v-bg);
+}
+
+/* --------------------------------------------------------------------------
+   PAGE SHELL
+   -------------------------------------------------------------------------- */
+
+.bb-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--v-bg);
+}
+
+.bb-main { flex: 1; }
+
+/* --------------------------------------------------------------------------
+   MOTION
+
+   Anyone who has asked their system to reduce motion gets none of it. This
+   has to come last so it wins over every transition declared above.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

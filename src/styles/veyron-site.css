@@ -1,0 +1,953 @@
+/* ==========================================================================
+   VEYRON — public site
+
+   The shell (header/footer) and the public-facing pages. Depends on the
+   tokens in veyron.css, which must be imported first.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   HEADER
+
+   Transparent over the hero, and it gains a ground and a hairline once you
+   scroll — so the top of the page reads as one continuous composition
+   instead of a bar stuck above a picture.
+   -------------------------------------------------------------------------- */
+
+.bb-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  padding-block: var(--v-4);
+  background-color: color-mix(in srgb, var(--v-bg) 88%, transparent);
+  border-bottom: 1px solid transparent;
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+/* color-mix is not in older browsers; they get the solid colour above only
+   if this @supports block does not apply. Either way the header is readable. */
+@supports not (background: color-mix(in srgb, red 50%, blue)) {
+  .bb-navbar { background-color: var(--v-bg); }
+}
+
+.bb-navbar.is-scrolled {
+  background-color: var(--v-bg);
+  border-bottom-color: var(--v-line);
+}
+
+.bb-navbar .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--v-3);
+  font-family: var(--v-sans);
+  font-size: var(--v-t-sm);
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--v-text);
+}
+
+.bb-navbar .navbar-brand:hover { color: var(--v-text); }
+
+.bb-navbar .nav-link {
+  position: relative;
+  padding-inline: var(--v-3);
+  font-size: var(--v-t-sm);
+  font-weight: 500;
+  color: var(--v-text-dim);
+  transition: color 160ms ease;
+}
+
+.bb-navbar .nav-link:hover,
+.bb-navbar .nav-link:focus-visible {
+  color: var(--v-text);
+}
+
+/* The current page is marked by BOTH a colour change and a rule underneath.
+   Colour alone would be invisible to someone who cannot distinguish these
+   two greys. */
+.bb-navbar .nav-link.active {
+  color: var(--v-text);
+}
+
+.bb-navbar .nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: var(--v-3);
+  right: var(--v-3);
+  bottom: -2px;
+  height: 1px;
+  background-color: var(--v-accent);
+}
+
+/* Bootstrap's toggler uses a background-image burger. Re-drawn here so it
+   is our warm off-white rather than Bootstrap's pure white. */
+.bb-navbar .navbar-toggler {
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+  padding: 0.45rem 0.6rem;
+}
+
+.bb-navbar .navbar-toggler:focus { box-shadow: none; }
+
+.bb-navbar .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23F3F0E8' stroke-linecap='round' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* On a phone the collapsed menu becomes a panel rather than links floating
+   over the page underneath. */
+@media (max-width: 991.98px) {
+  .bb-navbar .navbar-collapse {
+    margin-top: var(--v-4);
+    padding: var(--v-3);
+    background-color: var(--v-surface);
+    border: 1px solid var(--v-line);
+    border-radius: var(--v-radius-lg);
+  }
+
+  .bb-navbar .nav-link { padding-block: var(--v-3); }
+
+  .bb-navbar .nav-link.active::after { display: none; }
+
+  .bb-navbar .nav-link.active {
+    color: var(--v-accent-bright);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   HERO
+
+   Asymmetric on purpose: the headline column is wider than the panel, so
+   the page has a clear reading order rather than two columns competing.
+   -------------------------------------------------------------------------- */
+
+.bb-hero {
+  position: relative;
+  padding-block: var(--v-6) var(--v-7);
+  overflow: hidden;
+}
+
+/* A single, very faint warm wash behind the panel side. Not a gradient
+   "look" -- it exists to stop the right half of a near-black page reading
+   as a dead area, and it is subtle enough that you notice the content, not
+   the background. */
+.bb-hero::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 70%;
+  height: 120%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(200, 169, 106, 0.07),
+    transparent 62%
+  );
+  pointer-events: none;
+}
+
+.bb-hero-grid {
+  position: relative;
+  display: grid;
+  gap: var(--v-7);
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .bb-hero-grid {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: var(--v-8);
+  }
+}
+
+.bb-hero-title {
+  font-family: var(--v-serif);
+  font-size: var(--v-t-hero);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin-bottom: var(--v-5);
+}
+
+/* Each line of the headline is its own block, so the line breaks are
+   authored rather than left to the browser. */
+.bb-hero-title span { display: block; }
+
+/* The last line carries the accent. One word of bronze in the headline is
+   the strongest place to spend it. */
+.bb-hero-title .bb-hero-title-accent {
+  color: var(--v-accent-bright);
+  font-style: italic;
+}
+
+.bb-hero-lead {
+  font-size: var(--v-t-4);
+  color: var(--v-text-dim);
+  max-width: 46ch;
+  margin-bottom: var(--v-6);
+}
+
+.bb-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--v-3);
+}
+
+/* --------------------------------------------------------------------------
+   DISCOVERY PANEL
+
+   The right side of the hero. Several connected elements rather than one
+   image: an identity block, the shop's specialities, a real service with a
+   real price, and the next genuinely free appointment.
+
+   EVERY VALUE IN HERE COMES FROM THE DATABASE. If a piece is missing, that
+   piece does not render. Nothing is invented to fill the composition --
+   see HeroDiscoveryPanel.js.
+   -------------------------------------------------------------------------- */
+
+.bb-discovery {
+  position: relative;
+  background-color: var(--v-surface);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius-lg);
+  padding: var(--v-5);
+  box-shadow: var(--v-shadow);
+}
+
+/* The rows, which the rail is measured against. */
+.bb-discovery-rows { position: relative; }
+
+/* The rail: a hairline running down the left of the stack, tying the
+   separate rows into one object. It is bounded by .bb-discovery-rows --
+   measured against the panel instead, it ran past the last row and struck
+   through the button at the bottom. */
+.bb-discovery-rail {
+  position: absolute;
+  left: 21px;
+  top: 42px;
+  bottom: 12px;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    var(--v-line-strong),
+    var(--v-line) 70%,
+    transparent
+  );
+}
+
+.bb-discovery-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--v-3);
+  padding-bottom: var(--v-4);
+  margin-bottom: var(--v-4);
+  border-bottom: 1px solid var(--v-line);
+}
+
+.bb-discovery-head-label {
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--v-text-dim);
+}
+
+/* Each row of the panel. The dot sits on the rail. */
+.bb-discovery-row {
+  position: relative;
+  display: flex;
+  gap: var(--v-4);
+  padding-block: var(--v-3);
+}
+
+.bb-discovery-marker {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  background-color: var(--v-elevated);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+  color: var(--v-text-dim);
+}
+
+/* The barber's initials, standing in for a photo. Real, derived from the
+   real shop name -- not a stock portrait of someone who does not work
+   here. A barber who adds their own photoUrl gets that instead. */
+.bb-discovery-monogram {
+  font-family: var(--v-serif);
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  color: var(--v-accent);
+  background-color: var(--v-elevated);
+}
+
+.bb-discovery-photo {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: var(--v-radius);
+  border: 1px solid var(--v-line-strong);
+}
+
+.bb-discovery-body { min-width: 0; }
+
+.bb-discovery-label {
+  font-size: var(--v-t-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--v-text-dim);
+  margin-bottom: 2px;
+}
+
+.bb-discovery-value {
+  font-size: var(--v-t-body);
+  font-weight: 600;
+  color: var(--v-text);
+  margin-bottom: 0;
+}
+
+.bb-discovery-meta {
+  font-size: var(--v-t-sm);
+  color: var(--v-text-dim);
+  margin-bottom: 0;
+}
+
+.bb-discovery-shop {
+  font-family: var(--v-serif);
+  font-size: var(--v-t-3);
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+/* Specialities, straight from the profile. */
+.bb-discovery-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--v-2);
+  margin-top: var(--v-2);
+}
+
+.bb-discovery-tag {
+  padding: 0.12rem 0.5rem;
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+  font-size: var(--v-t-xs);
+  color: var(--v-text-dim);
+}
+
+/* THE accent moment of the panel: the next real free appointment. It is the
+   one thing here you can act on, so it is the one thing that is bronze. */
+.bb-discovery-row-slot .bb-discovery-marker {
+  border-color: var(--v-accent);
+  color: var(--v-accent);
+  background-color: color-mix(in srgb, var(--v-accent) 12%, var(--v-elevated));
+}
+
+.bb-discovery-slot-time {
+  font-family: var(--v-serif);
+  font-size: var(--v-t-3);
+  color: var(--v-accent-bright);
+  margin-bottom: 0;
+}
+
+.bb-discovery-foot {
+  margin-top: var(--v-4);
+  padding-top: var(--v-4);
+  border-top: 1px solid var(--v-line);
+}
+
+.bb-discovery-foot .btn { width: 100%; }
+
+/* The panel while its data is still loading. Same footprint as the real
+   thing, so the page does not jump when it arrives. */
+.bb-discovery-skeleton-line {
+  height: 10px;
+  border-radius: 2px;
+  background-color: var(--v-elevated);
+}
+
+/* --------------------------------------------------------------------------
+   PRICE
+
+   Tabular figures so a column of prices lines up on the decimal.
+   -------------------------------------------------------------------------- */
+
+.bb-price {
+  font-family: var(--v-sans);
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   SECTION HEADS
+   -------------------------------------------------------------------------- */
+
+.bb-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--v-4);
+  margin-bottom: var(--v-6);
+}
+
+.bb-section-head p { margin-bottom: 0; }
+
+/* --------------------------------------------------------------------------
+   STEPS
+
+   A numbered editorial list, not four identical cards. The number is large
+   and set in the serif; the rule above each item is what groups them.
+   -------------------------------------------------------------------------- */
+
+.bb-steps {
+  display: grid;
+  gap: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: bb-step;
+}
+
+@media (min-width: 768px) {
+  .bb-steps { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 992px) {
+  .bb-steps { grid-template-columns: repeat(4, 1fr); }
+}
+
+.bb-step {
+  counter-increment: bb-step;
+  padding: var(--v-5) var(--v-5) var(--v-5) 0;
+  border-top: 1px solid var(--v-line-strong);
+}
+
+@media (min-width: 768px) {
+  .bb-step { padding-right: var(--v-6); }
+}
+
+.bb-step::before {
+  content: counter(bb-step, decimal-leading-zero);
+  display: block;
+  font-family: var(--v-serif);
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--v-accent);
+  margin-bottom: var(--v-4);
+}
+
+.bb-step h3 {
+  font-family: var(--v-sans);
+  font-size: var(--v-t-4);
+  font-weight: 600;
+  margin-bottom: var(--v-2);
+}
+
+.bb-step p {
+  font-size: var(--v-t-sm);
+  color: var(--v-text-dim);
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   BARBER CARD
+   -------------------------------------------------------------------------- */
+
+.bb-barber-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--v-surface);
+  border: 1px solid var(--v-line);
+  border-radius: var(--v-radius-lg);
+  padding: var(--v-5);
+  transition: border-color 180ms ease, background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.bb-barber-card:hover {
+  border-color: var(--v-line-bright);
+  background-color: var(--v-elevated);
+  transform: translateY(-2px);
+}
+
+.bb-barber-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--v-4);
+  margin-bottom: var(--v-4);
+}
+
+.bb-barber-card-name {
+  font-family: var(--v-serif);
+  font-size: var(--v-t-3);
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.bb-barber-card-city {
+  font-size: var(--v-t-sm);
+  color: var(--v-text-dim);
+  margin-bottom: 0;
+}
+
+.bb-barber-card-bio {
+  font-size: var(--v-t-sm);
+  color: var(--v-text-dim);
+  /* Keeps a long bio from making one card twice the height of its
+     neighbours. The full text is on the barber's own page. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: var(--v-4);
+}
+
+.bb-barber-card-foot {
+  margin-top: auto;
+  padding-top: var(--v-4);
+  border-top: 1px solid var(--v-line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--v-3);
+}
+
+/* --------------------------------------------------------------------------
+   EMPTY STATE
+
+   Used wherever there is genuinely nothing yet. It says so plainly instead
+   of filling the space with invented content.
+   -------------------------------------------------------------------------- */
+
+.bb-empty {
+  border: 1px dashed var(--v-line-strong);
+  border-radius: var(--v-radius-lg);
+  padding: var(--v-7) var(--v-5);
+  text-align: center;
+  background-color: var(--v-sunken);
+}
+
+.bb-empty h3 {
+  font-family: var(--v-sans);
+  font-size: var(--v-t-4);
+  font-weight: 600;
+  margin-bottom: var(--v-2);
+}
+
+.bb-empty p {
+  color: var(--v-text-dim);
+  max-width: 46ch;
+  margin-inline: auto;
+  margin-bottom: var(--v-5);
+}
+
+/* --------------------------------------------------------------------------
+   FOOTER
+   -------------------------------------------------------------------------- */
+
+.bb-footer {
+  margin-top: var(--v-8);
+  padding-block: var(--v-7) var(--v-5);
+  background-color: var(--v-sunken);
+  border-top: 1px solid var(--v-line);
+}
+
+.bb-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--v-3);
+  font-size: var(--v-t-sm);
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--v-text);
+  text-decoration: none;
+}
+
+.bb-footer-tagline {
+  color: var(--v-text-dim);
+  font-size: var(--v-t-sm);
+  max-width: 34ch;
+  margin-top: var(--v-3);
+}
+
+.bb-footer h2,
+.bb-footer h3 {
+  font-family: var(--v-sans);
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--v-text-dim);
+  margin-bottom: var(--v-4);
+}
+
+.bb-footer a {
+  color: var(--v-text-dim);
+  text-decoration: none;
+  font-size: var(--v-t-sm);
+}
+
+.bb-footer a:hover {
+  color: var(--v-text);
+  text-decoration: underline;
+}
+
+.bb-footer-rule {
+  height: 1px;
+  background-color: var(--v-line);
+  margin-block: var(--v-6) var(--v-4);
+}
+
+.bb-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--v-3);
+  justify-content: space-between;
+  font-size: var(--v-t-xs);
+  color: var(--v-text-dim);
+}
+
+/* --------------------------------------------------------------------------
+   HERO, one column
+
+   When the database has no barbers yet there is no panel to show, so the
+   headline column takes the full width rather than sitting next to a hole.
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 992px) {
+  .bb-hero-grid-single {
+    grid-template-columns: 1fr;
+    max-width: 62ch;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   BAND
+
+   A section on a slightly different ground, to break up a long dark page.
+   One step, not a gradient.
+   -------------------------------------------------------------------------- */
+
+.bb-band {
+  background-color: var(--v-sunken);
+  border-block: 1px solid var(--v-line);
+}
+
+/* --------------------------------------------------------------------------
+   BARBER CARD, remaining parts
+   -------------------------------------------------------------------------- */
+
+.bb-barber-card-monogram {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  font-family: var(--v-serif);
+  font-size: 1.1rem;
+  color: var(--v-accent);
+  background-color: var(--v-elevated);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+}
+
+.bb-barber-card-photo {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+}
+
+/* Lets the text column shrink inside the flex row instead of forcing the
+   card wider than its grid cell. */
+.min-w-0 { min-width: 0; }
+
+/* --------------------------------------------------------------------------
+   FEATURE TILE
+
+   A top rule and an icon, not a box. Different shape from the barber cards
+   on purpose, so two consecutive rows of content do not read as the same
+   component twice.
+   -------------------------------------------------------------------------- */
+
+.bb-feature {
+  height: 100%;
+  padding-top: var(--v-4);
+  border-top: 1px solid var(--v-line-strong);
+}
+
+.bb-feature-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: var(--v-4);
+  color: var(--v-accent);
+  background-color: var(--v-surface);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+}
+
+.bb-feature-title {
+  font-family: var(--v-sans);
+  font-size: var(--v-t-body);
+  font-weight: 600;
+  margin-bottom: var(--v-2);
+}
+
+.bb-feature-text {
+  font-size: var(--v-t-sm);
+  color: var(--v-text-dim);
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   CAROUSEL
+
+   A real horizontal scroll container, so a thumb swipe works because it IS
+   scrolling -- see BarberCarousel.js.
+   -------------------------------------------------------------------------- */
+
+.bb-carousel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--v-4);
+  margin-bottom: var(--v-5);
+}
+
+.bb-carousel-controls {
+  display: flex;
+  gap: var(--v-2);
+}
+
+.bb-carousel-btn {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--v-text);
+  background-color: transparent;
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+  transition: border-color 160ms ease, color 160ms ease,
+    background-color 160ms ease;
+}
+
+.bb-carousel-btn:hover:not(:disabled) {
+  color: var(--v-bg);
+  background-color: var(--v-text);
+  border-color: var(--v-text);
+}
+
+/* Disabled means "you are at the end". It stays visible rather than
+   disappearing, so the row does not reflow as you scroll. */
+.bb-carousel-btn:disabled {
+  color: var(--v-line-bright);
+  border-color: var(--v-line);
+  cursor: default;
+}
+
+.bb-carousel-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(270px, 1fr);
+  gap: var(--v-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  /* Room for the hover lift and the focus ring, which would otherwise be
+     clipped by the scroll container. */
+  padding: 4px 4px var(--v-4);
+  margin-bottom: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--v-line-strong) transparent;
+}
+
+@media (min-width: 768px) {
+  .bb-carousel-track { grid-auto-columns: minmax(300px, 1fr); }
+}
+
+.bb-carousel-track::-webkit-scrollbar { height: 6px; }
+
+.bb-carousel-track::-webkit-scrollbar-thumb {
+  background-color: var(--v-line-strong);
+  border-radius: 3px;
+}
+
+.bb-carousel-item { scroll-snap-align: start; }
+
+/* --------------------------------------------------------------------------
+   NOTIFICATION BELL
+   -------------------------------------------------------------------------- */
+
+.bb-notif {
+  position: relative;
+}
+
+.bb-notif-bell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  color: var(--v-text-dim);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--v-radius);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.bb-notif-bell:hover {
+  color: var(--v-text);
+  border-color: var(--v-line-strong);
+}
+
+.bb-notif-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  display: grid;
+  place-items: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--v-bg);
+  background-color: var(--v-accent);
+  border-radius: 999px;
+  line-height: 1;
+}
+
+.bb-notif-panel {
+  position: absolute;
+  top: calc(100% + var(--v-2));
+  right: 0;
+  z-index: 1050;
+  width: 340px;
+  max-width: min(340px, calc(100vw - 2rem));
+  background-color: var(--v-elevated);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius-lg);
+  box-shadow: var(--v-shadow);
+  overflow: hidden;
+}
+
+.bb-notif-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--v-3);
+  padding: var(--v-3) var(--v-4);
+  font-size: var(--v-t-sm);
+  font-weight: 600;
+  color: var(--v-text);
+  border-bottom: 1px solid var(--v-line);
+}
+
+.bb-notif-markall {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--v-1);
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  color: var(--v-accent-bright);
+  background: transparent;
+  border: 0;
+}
+
+.bb-notif-markall:hover { color: var(--v-accent); }
+
+.bb-notif-state {
+  display: flex;
+  align-items: center;
+  gap: var(--v-2);
+  padding: var(--v-5) var(--v-4);
+  font-size: var(--v-t-sm);
+  color: var(--v-text-dim);
+  justify-content: center;
+  text-align: center;
+}
+
+.bb-notif-state-error { color: var(--v-bad); }
+
+.bb-notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.bb-notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--v-2);
+  padding: var(--v-3) var(--v-4);
+  border-bottom: 1px solid var(--v-line);
+}
+
+.bb-notif-item.is-unread {
+  background-color: color-mix(in srgb, var(--v-accent) 6%, transparent);
+}
+
+.bb-notif-item-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  color: var(--v-text);
+}
+
+.bb-notif-item-title {
+  font-size: var(--v-t-sm);
+  font-weight: 600;
+}
+
+.bb-notif-item-message {
+  font-size: var(--v-t-xs);
+  color: var(--v-text-dim);
+  overflow-wrap: anywhere;
+}
+
+.bb-notif-item-time {
+  font-size: 0.7rem;
+  color: var(--v-text-dim);
+  margin-top: 2px;
+}
+
+.bb-notif-item-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.bb-notif-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: var(--v-text-dim);
+  background: transparent;
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+}
+
+.bb-notif-icon-btn:hover {
+  color: var(--v-text);
+  border-color: var(--v-line-bright);
+}

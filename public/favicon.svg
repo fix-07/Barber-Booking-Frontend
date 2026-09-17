@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="VEYRON icon">
+  <title>VEYRON icon</title>
+  <!--
+    Original artwork made for this project: a simple barber comb.
+    Not copied from any existing logo or stock library.
+    Geometric shapes only, so it stays sharp at 16x16.
+  -->
+  <rect width="64" height="64" rx="12" fill="#0E0E10"/>
+  <!-- comb spine -->
+  <rect x="14" y="17" width="36" height="7" rx="2" fill="#D4A63C"/>
+  <!-- comb teeth -->
+  <rect x="17" y="26" width="4" height="21" rx="1.6" fill="#D4A63C"/>
+  <rect x="25" y="26" width="4" height="21" rx="1.6" fill="#D4A63C"/>
+  <rect x="33" y="26" width="4" height="21" rx="1.6" fill="#D4A63C"/>
+  <rect x="41" y="26" width="4" height="21" rx="1.6" fill="#D4A63C"/>
+</svg>

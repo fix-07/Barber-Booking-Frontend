@@ -1,0 +1,283 @@
+/* ==========================================================================
+   APPOINTMENT PICKER (calendar + real time slots)
+
+   Ported from a shadcn/Tailwind component. Written as plain CSS here.
+
+   react-day-picker v10 exposes --rdp-* CSS variables, the same idea as
+   Bootstrap's --bs-*. So we theme it by setting those variables rather than
+   fighting its own rules with overrides, which keeps this working when the
+   library updates.
+
+   No pill shapes. No purple. Gold accent, matching the rest of the site.
+
+   DELIBERATELY A LIGHT SURFACE, not converted to the dark chrome the rest
+   of the site uses. A bright "paper" card set into a dark page is a
+   legitimate premium pattern -- it draws the eye to the one input that
+   actually matters for booking to complete -- and re-theming it dark would
+   re-risk the selected/disabled/outside-day contrast pairs already
+   measured below for no real gain: the ask was for this to feel like a
+   designed part of the product, not for every surface to be the same
+   colour. The frame/shadow below is what makes that intentional rather
+   than a bare, unstyled widget left mid-migration.
+   ========================================================================== */
+
+.bb-picker {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--border-light, #e3e3e6);
+  border-radius: var(--v-radius-lg, 0.5rem);
+  overflow: hidden;
+  background: #ffffff;
+  /* A bronze-tinted edge plus a real drop shadow, so the one light "paper"
+     surface on this otherwise-dark page reads as a deliberately placed
+     panel -- see the file header for why it stays light rather than
+     converting to dark chrome. */
+  box-shadow: 0 0 0 1px rgba(212, 166, 60, 0.14), var(--v-shadow);
+}
+
+/* ----------------------------- calendar ----------------------------- */
+
+.bb-picker-calendar {
+  padding: 12px;
+  flex: 1 1 300px;
+
+  /* Theme react-day-picker through its own variables. */
+  --rdp-accent-color: var(--bb-gold-ink, #7a5a12);
+  --rdp-accent-background-color: rgba(212, 166, 60, 0.16);
+  --rdp-today-color: var(--bb-gold-ink, #7a5a12);
+  --rdp-day-height: 38px;
+  --rdp-day-width: 38px;
+  --rdp-disabled-opacity: 0.35;
+  --rdp-outside-opacity: 0.4;
+  --rdp-nav-height: 36px;
+  /* No animation. The brief asks for restraint, and a sliding month is the
+     kind of movement that makes some people queasy. */
+  --rdp-animation: none;
+}
+
+.bb-picker-calendar .rdp-root {
+  font-size: var(--v-t-sm, 0.9rem);
+}
+
+.bb-picker-calendar .rdp-month_caption {
+  font-weight: 650;
+  font-size: 0.95rem;
+  /* Not just size/weight: react-day-picker's caption has no colour of its
+     own, so without this it inherits the page's ambient (light) body text
+     -- invisible on this component's white background. */
+  color: var(--bb-ink-on-light, #16161a);
+}
+
+.bb-picker-calendar .rdp-weekday {
+  font-size: var(--v-t-xs, 0.72rem);
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bb-ink-muted-on-light, #55555f);
+  opacity: 1;
+}
+
+.bb-picker-calendar .rdp-day_button {
+  border-radius: 0.375rem;
+  font-size: 0.88rem;
+  border: 1px solid transparent;
+}
+
+.bb-picker-calendar .rdp-day_button:hover:not([disabled]) {
+  background-color: rgba(212, 166, 60, 0.18);
+  border-color: var(--bb-gold, #d4a63c);
+}
+
+/*
+  The selected day.
+
+  Gold background with near-black text measures 8.01:1, well past the 4.5:1
+  minimum. A lighter gold with white text would have failed.
+*/
+.bb-picker-calendar .rdp-selected .rdp-day_button {
+  background-color: var(--bb-gold, #d4a63c);
+  border-color: var(--bb-gold, #d4a63c);
+  color: var(--bb-ink-on-light, #16161a);
+  font-weight: 700;
+}
+
+/*
+  A day the barber is closed, or one outside the booking window.
+
+  Greyed out AND struck through, so it does not rely on colour alone. The
+  button is genuinely disabled too, so a keyboard user is not sent to a day
+  they cannot use.
+*/
+.bb-picker-calendar .rdp-disabled .rdp-day_button {
+  /* react-day-picker's own default is a translucent white, tuned for a
+     dark picker -- on this component's white background that is close to
+     invisible rather than merely "greyed out". */
+  color: var(--bb-ink-muted-on-light, #55555f);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.bb-picker-calendar .rdp-outside .rdp-day_button {
+  color: var(--bb-ink-muted-on-light, #55555f);
+  opacity: 0.5;
+}
+
+.bb-picker-calendar .rdp-today:not(.rdp-selected) .rdp-day_button {
+  font-weight: 700;
+  color: var(--bb-gold-ink, #7a5a12);
+}
+
+/* Month navigation arrows. */
+.bb-picker-calendar .rdp-button_previous,
+.bb-picker-calendar .rdp-button_next {
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-light, #e3e3e6);
+  background: #ffffff;
+  color: var(--bb-ink-on-light, #16161a);
+  width: 34px;
+  height: 34px;
+}
+
+.bb-picker-calendar .rdp-button_previous:hover:not([disabled]),
+.bb-picker-calendar .rdp-button_next:hover:not([disabled]) {
+  border-color: var(--bb-ink-on-light, #16161a);
+}
+
+.bb-picker-calendar .rdp-button_previous[disabled],
+.bb-picker-calendar .rdp-button_next[disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Keyboard focus. Never remove this: it is the only thing telling someone
+   navigating by keyboard where they are. */
+.bb-picker-calendar .rdp-day_button:focus-visible,
+.bb-picker-calendar .rdp-button_previous:focus-visible,
+.bb-picker-calendar .rdp-button_next:focus-visible {
+  outline: 3px solid var(--bb-gold, #d4a63c);
+  outline-offset: 2px;
+}
+
+/* ------------------------------- times ------------------------------- */
+
+.bb-picker-times {
+  flex: 0 0 190px;
+  border-left: 1px solid var(--border-light, #e3e3e6);
+  padding: 14px 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 330px;
+  max-height: 360px;
+}
+
+.bb-picker-day-heading {
+  font-size: var(--v-t-sm, 0.85rem);
+  font-weight: 650;
+  margin: 0 0 10px;
+  padding: 0 14px;
+  color: var(--bb-ink-on-light, #16161a);
+}
+
+/*
+  A plain scrolling list. This is what @radix-ui/react-scroll-area would have
+  been installed for, and overflow-y:auto does it with no package and no
+  JavaScript.
+*/
+.bb-picker-slot-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 14px;
+  overflow-y: auto;
+  flex: 1;
+  display: grid;
+  gap: 6px;
+}
+
+.bb-picker-slot-list li {
+  margin: 0;
+}
+
+.bb-picker-slot {
+  width: 100%;
+  min-height: 38px;
+  padding: 7px 10px;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-light, #e3e3e6);
+  background: #ffffff;
+  color: var(--bb-ink-on-light, #16161a);
+  font-size: var(--v-t-sm, 0.88rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease,
+    transform 140ms ease, box-shadow 140ms ease;
+}
+
+.bb-picker-slot:hover:not(:disabled) {
+  border-color: var(--bb-ink-on-light, #16161a);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(14, 14, 16, 0.08);
+}
+
+/* The chosen time. Solid fill plus aria-pressed, so it is not colour alone. */
+.bb-picker-slot.is-chosen {
+  background: var(--bb-ink-on-light, #16161a);
+  border-color: var(--bb-ink-on-light, #16161a);
+  color: #ffffff;
+}
+
+/* A taken time. Struck through as well as faded. */
+.bb-picker-slot:disabled {
+  background: #f7f7f8;
+  color: var(--bb-ink-muted-on-light, #55555f);
+  cursor: not-allowed;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.bb-picker-slot:focus-visible {
+  outline: 3px solid var(--bb-gold, #d4a63c);
+  outline-offset: 2px;
+}
+
+.bb-picker-empty {
+  padding: 0 14px;
+  margin: 0;
+  font-size: var(--v-t-sm, 0.85rem);
+  color: var(--bb-ink-muted-on-light, #55555f);
+}
+
+.bb-picker-note {
+  margin: 10px 0 0;
+  padding: 0 14px;
+  font-size: var(--v-t-xs, 0.75rem);
+  color: var(--bb-ink-muted-on-light, #55555f);
+}
+
+/* ------------------------------ narrow ------------------------------- */
+
+@media (max-width: 575px) {
+  .bb-picker-times {
+    flex: 1 1 100%;
+    border-left: none;
+    border-top: 1px solid var(--border-light, #e3e3e6);
+    max-height: 260px;
+    min-height: 0;
+  }
+
+  /* Two columns of times on a phone, so the list is not one long scroll. */
+  .bb-picker-slot-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .bb-picker-calendar {
+    flex: 1 1 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bb-picker-slot {
+    transition: none;
+  }
+}

@@ -1,0 +1,861 @@
+/* ==========================================================================
+   ADMIN SHELL (/admin/*)
+
+   Reuses the site's existing dark/gold/ink tokens from theme.css rather than
+   a parallel palette -- see the root :root block there for --bb-black,
+   --bb-gold, --bb-ink, the --bb-space-* scale, and --bb-font-display.
+
+   This file only adds what the customer site's theme.css does not already
+   cover: a fixed dark sidebar next to a light content area, which nothing
+   on the customer site needed before now.
+
+   Colour pairings introduced here that are NOT already used elsewhere in
+   theme.css, checked with the project's usual relative-luminance script:
+     - var(--bb-ink) on var(--bb-admin-content-bg) (#16161a on #f6f5f2): 16.55:1
+     - var(--bb-ink-muted) on var(--bb-admin-content-bg) (#55555f on #f6f5f2): 6.76:1
+     - var(--bb-ink-muted) on white, the topbar (#55555f on #ffffff): 7.37:1
+   Every other pairing below (gold-on-black active nav, ink-on-gold button,
+   muted-on-dark sidebar text) already exists and was already checked in
+   theme.css / forms.css.
+
+   Table/card/empty-state/nav-active treatments added in a later pass reuse
+   this same light-content-area palette -- see the sections below marked
+   accordingly -- rather than introducing a second one.
+   ========================================================================== */
+
+.bb-admin-shell {
+  display: flex;
+  min-height: 100vh;
+  align-items: stretch;
+}
+
+/* -------------------------------- sidebar -------------------------------- */
+
+.bb-admin-sidebar {
+  width: 260px;
+  flex: none;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bb-space-6);
+  background-color: var(--bb-black);
+  color: var(--bb-text-on-dark);
+  padding: var(--bb-space-5) var(--bb-space-4);
+}
+
+.bb-admin-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bb-space-2);
+  color: var(--bb-text-on-dark);
+  text-decoration: none;
+  font-family: var(--bb-font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+}
+
+.bb-admin-brand:hover {
+  color: var(--bb-gold);
+}
+
+.bb-admin-brand .bb-monogram {
+  width: 22px;
+  height: 22px;
+  color: var(--bb-gold);
+  flex: none;
+}
+
+.bb-admin-nav {
+  flex: 1;
+}
+
+.bb-admin-nav ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+}
+
+.bb-admin-nav-link {
+  display: block;
+  padding: 10px 14px;
+  border-radius: var(--bs-border-radius, 0.375rem);
+  color: var(--bb-muted-on-dark);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: background-color 160ms ease, color 160ms ease,
+    border-color 160ms ease;
+}
+
+.bb-admin-nav-link:hover {
+  color: var(--bb-text-on-dark);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* A quiet tint plus a coloured left bar, rather than a solid gold block --
+   the same "current item" language a Linear/Stripe-style sidebar uses.
+   Gold text on a faint gold-tinted near-black still measures comfortably
+   above AA (the tint is only 12% gold mixed into --bb-black). */
+.bb-admin-nav-link.is-active {
+  color: var(--bb-gold);
+  background-color: rgba(212, 166, 60, 0.12);
+  border-left-color: var(--bb-gold);
+}
+
+.bb-admin-sidebar-bottom {
+  margin-top: auto;
+  padding-top: var(--bb-space-5);
+  border-top: 1px solid var(--bb-border-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bb-space-3);
+}
+
+.bb-admin-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.bb-admin-profile-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--bb-text-on-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bb-admin-profile-role {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--bb-gold);
+}
+
+/* ------------------------------- content area ----------------------------- */
+
+.bb-admin-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bb-admin-content-bg, #f6f5f2);
+}
+
+.bb-admin-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bb-space-4);
+  padding: var(--bb-space-5) var(--bb-space-6);
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba(14, 14, 16, 0.08);
+}
+
+.bb-admin-page-title {
+  margin: 0;
+  font-family: var(--bb-font-display);
+  font-size: 1.55rem;
+  color: var(--bb-ink-on-light);
+}
+
+.bb-admin-date {
+  margin: 4px 0 0;
+  font-size: 0.88rem;
+  color: var(--bb-ink-muted-on-light);
+}
+
+.bb-admin-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--bb-space-3);
+}
+
+.bb-admin-icon-btn {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(14, 14, 16, 0.14);
+  border-radius: var(--bs-border-radius, 0.375rem);
+  background-color: #ffffff;
+  color: var(--bb-ink-muted-on-light);
+  cursor: pointer;
+}
+
+.bb-admin-icon-btn:hover,
+.bb-admin-icon-btn:focus-visible {
+  color: var(--bb-ink-on-light);
+  border-color: rgba(14, 14, 16, 0.3);
+}
+
+/* Bootstrap's Dropdown.Toggle adds its own caret via ::after; this toggle is
+   icon-only, so that caret would be a stray mark next to the bell. */
+.bb-admin-icon-btn::after {
+  display: none;
+}
+
+.bb-admin-notification-empty {
+  padding: var(--bb-space-3) var(--bb-space-4);
+  min-width: 220px;
+  font-size: 0.88rem;
+  color: var(--bb-ink-muted);
+}
+
+.bb-admin-content {
+  flex: 1;
+  padding: var(--bb-space-6);
+}
+
+.bb-admin-placeholder {
+  background-color: #ffffff;
+  border: 1px dashed rgba(14, 14, 16, 0.18);
+  border-radius: var(--bs-border-radius-lg, 0.5rem);
+  padding: var(--bb-space-6);
+}
+
+/* --------------------------------- tables ----------------------------------
+   Wraps an existing <Table> (inside its own .table-responsive, unchanged)
+   so a list reads as one considered card -- a tinted uppercase header row,
+   a hairline between rows instead of Bootstrap's default heavy grid, and a
+   quiet hover tint -- rather than a bare HTML table sitting on the page. */
+
+.bb-admin-table-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(14, 14, 16, 0.08);
+  border-radius: var(--bs-border-radius-lg, 0.5rem);
+  overflow: hidden;
+  color: var(--bb-ink-on-light);
+}
+
+/* Bootstrap's own <Table> reads its cell colour/background from
+   --bs-table-color / --bs-table-bg, which default to the page's (dark)
+   --bs-body-color/--bs-body-bg -- not inherited `color`, so setting that
+   above is not enough on its own. Re-pointing both here is what actually
+   keeps cell text dark and cell backgrounds transparent on this white
+   card. */
+.bb-admin-table-card table {
+  --bs-table-color: var(--bb-ink-on-light);
+  --bs-table-bg: transparent;
+  /* Bootstrap's hover prop paints this on each cell (not the row), via
+     .table-hover > tbody > tr:hover > * -- a plain tr:hover background
+     rule would sit invisibly behind the cells' own opaque background. */
+  --bs-table-hover-bg: rgba(212, 166, 60, 0.08);
+  --bs-table-hover-color: var(--bb-ink-on-light);
+  margin-bottom: 0;
+}
+
+.bb-admin-table-card thead th {
+  background-color: rgba(14, 14, 16, 0.02);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--bb-ink-muted-on-light);
+  border-bottom: 1px solid rgba(14, 14, 16, 0.08);
+  white-space: nowrap;
+}
+
+.bb-admin-table-card tbody td {
+  border-color: rgba(14, 14, 16, 0.06);
+  vertical-align: middle;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+/* ------------------------------ empty states -------------------------------
+   For a filtered-to-nothing list or a section with genuinely no data yet,
+   on the light content area -- the dark-theme .v-empty-state from
+   veyron-barber.css would be the wrong surface here. */
+
+.bb-admin-empty {
+  text-align: center;
+  padding: var(--bb-space-7) var(--bb-space-5);
+  background-color: #ffffff;
+  border: 1px dashed rgba(14, 14, 16, 0.18);
+  border-radius: var(--bs-border-radius-lg, 0.5rem);
+}
+
+.bb-admin-empty p {
+  color: var(--bb-ink-muted-on-light);
+  max-width: 46ch;
+  margin-inline: auto;
+  margin-bottom: var(--bb-space-4);
+}
+
+.bb-admin-empty p:last-of-type {
+  margin-bottom: 0;
+}
+
+/* ---------------------------------- badges ---------------------------------
+   A status pill for the light content area. NOT theme.css's old .bb-badge-*
+   (dead, unimported) and NOT --bb-success-ink/--bb-danger-ink (bridged to
+   the light tones veyron.css uses for dark surfaces -- too pale to read as
+   text on white). Literal, explicitly dark-on-light colours instead, so
+   this never inherits a future change meant for a dark surface. */
+
+.bb-admin-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid currentColor;
+  border-radius: var(--bs-border-radius, 0.375rem);
+  padding: 0.2em 0.6em;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+.bb-admin-badge-ok {
+  color: #1d6b45;
+  background-color: #eff8f3;
+}
+
+.bb-admin-badge-muted {
+  color: #55555f;
+  background-color: #f2f2f0;
+}
+
+/* StatusBadge.js / PaymentStatusBadge.js render <Badge bg="" className=
+   "bb-badge bb-badge-pending|confirmed|done|cancelled|muted">. Those five
+   classes are otherwise undefined (they only ever existed in theme.css,
+   which nothing imports), so everywhere else they render as Bootstrap's
+   unstyled default -- white text, no background -- which happens to read
+   fine on the dark cards those badges normally sit on (barber pages, the
+   admin dashboard's dark KPI/timeline cards). Inside .bb-admin-table-card
+   specifically they would be invisible white-on-white, so this gives them
+   a real coloured pill there and only there. Literal colours (not the
+   bridged --bb-success-ink/--bb-danger-ink tokens, which are now the pale
+   tones meant for a dark surface) -- these are the original, WCAG-checked
+   theme.css values, measured between 5.05:1 and 7.93:1. */
+.bb-admin-table-card .bb-badge-pending,
+.bb-admin-table-card .bb-badge-confirmed,
+.bb-admin-table-card .bb-badge-done,
+.bb-admin-table-card .bb-badge-cancelled,
+.bb-admin-table-card .bb-badge-muted {
+  border: 1px solid currentColor;
+  border-radius: var(--bs-border-radius, 0.375rem);
+}
+
+.bb-admin-table-card .bb-badge-pending {
+  color: #8a6206;
+  background-color: #fdf5e2;
+}
+.bb-admin-table-card .bb-badge-confirmed {
+  color: #1d6b45;
+  background-color: #eff8f3;
+}
+.bb-admin-table-card .bb-badge-done {
+  color: #14538f;
+  background-color: #eef5fd;
+}
+.bb-admin-table-card .bb-badge-cancelled {
+  color: #a3231a;
+  background-color: #fdf0ef;
+}
+.bb-admin-table-card .bb-badge-muted {
+  color: #4c4c55;
+  background-color: #f7f7f8;
+}
+
+/* Bootstrap's .text-muted reads --bs-secondary-color, which veyron.css
+   points at the page's (light) --v-text-dim for the dark customer site --
+   about 2.6:1 on white, well under AA. Bootstrap sets it with !important,
+   so the override has to match. Scoped to the light admin surfaces only;
+   .text-muted elsewhere (dark cards, the customer site) is unaffected and
+   already correct. */
+.bb-admin-table-card .text-muted,
+.bb-admin-empty .text-muted,
+.bb-admin-placeholder .text-muted {
+  color: var(--bb-ink-muted-on-light) !important;
+}
+
+/* Same story for .btn-outline-dark/-secondary/-danger: veyron.css points
+   their text colour at --v-text/--v-bad, correct for the dark page these
+   buttons normally sit on, but light-on-white (or a too-pale red) on these
+   new white surfaces. Literal, proven-safe colours -- the same ones
+   theme.css originally measured (7.47:1 for the danger variant) -- rather
+   than a token that might mean something different again later. */
+.bb-admin-table-card .btn-outline-dark,
+.bb-admin-table-card .btn-outline-secondary,
+.bb-admin-empty .btn-outline-dark,
+.bb-admin-empty .btn-outline-secondary {
+  --bs-btn-color: #16161a;
+  --bs-btn-border-color: #d0d0d5;
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: #16161a;
+  --bs-btn-hover-border-color: #16161a;
+  --bs-btn-active-color: #ffffff;
+  --bs-btn-active-bg: #16161a;
+  --bs-btn-active-border-color: #16161a;
+}
+
+.bb-admin-table-card .btn-outline-danger,
+.bb-admin-empty .btn-outline-danger {
+  --bs-btn-color: #a3231a;
+  --bs-btn-border-color: #a3231a;
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: #a3231a;
+  --bs-btn-hover-border-color: #a3231a;
+  --bs-btn-active-color: #ffffff;
+  --bs-btn-active-bg: #851c15;
+  --bs-btn-active-border-color: #851c15;
+}
+
+/* ------------------------------ staff sign-in ----------------------------- */
+
+/* auth.css sizes .bb-auth-page to leave room for the customer header
+   (calc(100vh - 68px)); there is no header on this page. */
+.bb-admin-login-page {
+  min-height: 100vh;
+}
+
+.bb-admin-login-mark {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--bb-space-4);
+}
+
+.bb-admin-login-mark .bb-monogram {
+  width: 40px;
+  height: 40px;
+  color: var(--bb-gold);
+}
+
+/* ---------------------------------- shared --------------------------------- */
+
+.bb-monogram {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+/* --------------------------------- KPI cards ------------------------------- */
+
+.bb-kpi-card {
+  border: 1px solid rgba(14, 14, 16, 0.1);
+  border-top: 2px solid var(--bb-gold);
+}
+
+.bb-kpi-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--bb-ink-muted);
+}
+
+.bb-kpi-value {
+  font-family: var(--bb-font-display);
+  font-size: 2rem;
+  color: var(--bb-ink);
+}
+
+.bb-kpi-change {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Reusing --bb-success-ink / --bb-danger-ink exactly as theme.css's badge
+   section already does on a white surface -- no new pairing to check. */
+.bb-kpi-change.is-up {
+  color: var(--bb-success-ink);
+}
+.bb-kpi-change.is-down {
+  color: var(--bb-danger-ink);
+}
+.bb-kpi-change.is-flat {
+  color: var(--bb-ink-muted);
+}
+
+/* -------------------------------- weekly chart ----------------------------- */
+
+.bb-weekly-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--bb-space-3);
+  height: 200px;
+}
+
+.bb-weekly-chart-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.bb-weekly-chart-track {
+  flex: 1;
+  width: 100%;
+  max-width: 36px;
+  display: flex;
+  align-items: flex-end;
+  background-color: rgba(14, 14, 16, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bb-weekly-chart-bar {
+  width: 100%;
+  background-color: var(--bb-gold);
+  border-radius: 3px 3px 0 0;
+  transition: height 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bb-weekly-chart-bar {
+    transition: none;
+  }
+}
+
+.bb-weekly-chart-count {
+  margin-top: var(--bb-space-2);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--bb-ink);
+}
+
+.bb-weekly-chart-day {
+  font-size: 0.75rem;
+  color: var(--bb-ink-muted);
+}
+
+/* ----------------------------- today's timeline ---------------------------- */
+
+.bb-admin-timeline {
+  position: relative;
+  padding-left: 64px;
+  margin: 0;
+}
+
+.bb-admin-timeline-item {
+  position: relative;
+  padding-bottom: var(--bb-space-4);
+}
+
+.bb-admin-timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.bb-admin-timeline-time {
+  position: absolute;
+  left: -64px;
+  width: 52px;
+  text-align: right;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--bb-ink-muted);
+}
+
+/* The dot on the line, marking this appointment's moment. */
+.bb-admin-timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -22px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--bb-gold);
+}
+
+/* The connecting line down to the next item. */
+.bb-admin-timeline-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: -18.5px;
+  top: 14px;
+  bottom: -4px;
+  width: 1px;
+  background-color: rgba(14, 14, 16, 0.12);
+}
+
+/* ----------------------------------- calendar ------------------------------ */
+
+.bb-cal-grid {
+  display: flex;
+  background-color: #ffffff;
+  border: 1px solid rgba(14, 14, 16, 0.1);
+  border-radius: var(--bs-border-radius-lg, 0.5rem);
+  overflow: hidden;
+}
+
+.bb-cal-hour-rail {
+  flex: none;
+  width: 52px;
+  border-right: 1px solid rgba(14, 14, 16, 0.08);
+}
+
+.bb-cal-hour-labels {
+  position: relative;
+}
+
+.bb-cal-hour-label {
+  position: absolute;
+  left: 0;
+  right: 6px;
+  transform: translateY(-50%);
+  font-size: 0.7rem;
+  color: var(--bb-ink-muted-on-light);
+  text-align: right;
+}
+
+.bb-cal-columns {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+}
+
+.bb-cal-column {
+  flex: 1;
+  min-width: 150px;
+  border-right: 1px solid rgba(14, 14, 16, 0.06);
+}
+
+.bb-cal-column.is-compact {
+  min-width: 116px;
+}
+
+.bb-cal-column:last-child {
+  border-right: none;
+}
+
+.bb-cal-column-header {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--bb-space-2);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--bb-ink-on-light);
+  text-align: center;
+  border-bottom: 1px solid rgba(14, 14, 16, 0.08);
+  background-color: rgba(14, 14, 16, 0.02);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bb-cal-column-body {
+  position: relative;
+}
+
+.bb-cal-hour-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: rgba(14, 14, 16, 0.06);
+}
+
+/* The "refined dark card" the brief asked for: dark surface regardless of
+   the light grid behind it, gold accent stripe, one line of status text
+   when the status is not the expected "confirmed" default (never colour
+   alone -- see the comment in DayTimeGrid.js). */
+/* left/width are set inline per-card by DayTimeGrid.js's lane layout, so
+   two overlapping bookings (e.g. a cancelled slot rebooked at the same
+   time) render side by side instead of stacked invisibly on top of each
+   other. */
+.bb-cal-card {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 3px 6px;
+  border: none;
+  border-left: 3px solid var(--bb-gold);
+  border-radius: 4px;
+  background-color: var(--bb-black);
+  color: var(--bb-text-on-dark);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background-color 140ms ease, transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.bb-cal-card:hover,
+.bb-cal-card:focus-visible {
+  background-color: var(--bb-surface);
+  transform: translateY(-1px);
+  box-shadow: var(--v-shadow);
+}
+
+.bb-cal-card.is-pending {
+  border-left-color: #d8a94a;
+}
+
+.bb-cal-card.is-cancelled_by_customer,
+.bb-cal-card.is-cancelled_by_barber,
+.bb-cal-card.is-cancelled_by_admin,
+.bb-cal-card.is-no_show {
+  opacity: 0.55;
+  border-left-color: var(--bb-border-strong);
+}
+
+.bb-cal-card-time {
+  font-weight: 600;
+  font-size: 0.68rem;
+  opacity: 0.85;
+}
+
+.bb-cal-card-client {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bb-cal-card-service {
+  font-size: 0.68rem;
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ------------------------------- month view -------------------------------- */
+
+.bb-cal-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background-color: rgba(14, 14, 16, 0.08);
+  border: 1px solid rgba(14, 14, 16, 0.08);
+  border-radius: var(--bs-border-radius-lg, 0.5rem);
+  overflow: hidden;
+}
+
+.bb-cal-month-weekday {
+  background-color: #ffffff;
+  padding: var(--bb-space-2);
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--bb-ink-muted-on-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bb-cal-month-day {
+  background-color: #ffffff;
+  min-height: 96px;
+  padding: var(--bb-space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bb-cal-month-day.is-outside {
+  background-color: rgba(14, 14, 16, 0.015);
+}
+
+.bb-cal-month-day.is-today .bb-cal-month-day-number {
+  color: var(--bb-ink-on-light);
+  background-color: var(--bb-gold);
+  border-radius: 50%;
+}
+
+.bb-cal-month-day-number {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--bb-ink-muted-on-light);
+}
+
+.bb-cal-month-chip {
+  display: block;
+  width: 100%;
+  border: none;
+  border-left: 3px solid var(--bb-gold);
+  border-radius: 3px;
+  background-color: var(--bb-black);
+  color: var(--bb-text-on-dark);
+  font-size: 0.68rem;
+  padding: 2px 5px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background-color 140ms ease, transform 140ms ease;
+}
+
+.bb-cal-month-chip:hover,
+.bb-cal-month-chip:focus-visible {
+  background-color: var(--bb-surface);
+  transform: translateY(-1px);
+}
+
+.bb-cal-month-chip.is-muted {
+  opacity: 0.55;
+  border-left-color: var(--bb-border-strong);
+}
+
+.bb-cal-month-more {
+  font-size: 0.68rem;
+  color: var(--bb-ink-muted-on-light);
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0;
+}
+
+/* ---------------------------------- mobile --------------------------------- */
+
+@media (max-width: 900px) {
+  .bb-admin-shell {
+    flex-direction: column;
+  }
+
+  .bb-admin-sidebar {
+    position: static;
+    height: auto;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--bb-space-4);
+  }
+
+  .bb-admin-nav {
+    order: 3;
+    width: 100%;
+  }
+
+  .bb-admin-nav ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .bb-admin-sidebar-bottom {
+    margin-top: 0;
+    margin-left: auto;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .bb-admin-topbar {
+    padding: var(--bb-space-4);
+  }
+
+  .bb-admin-content {
+    padding: var(--bb-space-4);
+  }
+}

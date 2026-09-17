@@ -1,0 +1,96 @@
+/* ==========================================================================
+   BARBER CAROUSEL
+
+   REWRITTEN. The original file was lost; this is a fresh implementation for
+   the rebuilt components/BarberCarousel.js.
+
+   Kept in its own file rather than added to theme.css, because it belongs to
+   one component. If you ever remove the carousel, you delete this file and
+   the import in src/index.js and nothing else is affected.
+
+   Rules carried over from the rest of the project:
+     - No pill shapes. Everything uses the project's own radius.
+     - Colours come from the --bb-* variables in theme.css, so this file
+       introduces no new palette and nothing here needs its own contrast
+       check.
+     - Motion is a scroll, which the browser already suppresses for anyone
+       with prefers-reduced-motion set.
+   ========================================================================== */
+
+/* The heading row: kicker + title on the left, scroll buttons on the right.
+   The buttons drop below the heading on a narrow screen rather than
+   squeezing the title. */
+.bb-carousel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--bb-space-3);
+  margin-bottom: var(--bb-space-5);
+}
+
+.bb-carousel-controls {
+  display: flex;
+  gap: var(--bb-space-2);
+}
+
+.bb-carousel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 44px, the same comfortable target size theme.css sets for buttons. */
+  width: 44px;
+  height: 44px;
+  border: 1px solid #d0d0d5;
+  border-radius: var(--bs-border-radius);
+  background-color: #ffffff;
+  color: var(--bb-ink);
+  transition: background-color 130ms ease, border-color 130ms ease,
+    color 130ms ease;
+}
+
+.bb-carousel-btn:hover:not(:disabled) {
+  background-color: var(--bb-ink);
+  border-color: var(--bb-ink);
+  color: #ffffff;
+}
+
+/* Disabled at the ends of the track. Kept visible rather than hidden so the
+   controls do not jump around as you scroll, but clearly inert. */
+.bb-carousel-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* The scrolling row itself. grid-auto-flow: column lays the cards out in a
+   single line; scroll-snap makes each one come to rest at the left edge
+   rather than stopping halfway across a card. */
+.bb-carousel-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(260px, 320px);
+  gap: var(--bb-space-4);
+  margin-bottom: 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  /* Room for the cards' hover lift and focus ring, which would otherwise be
+     clipped by the scroll container's own edges. */
+  padding: 4px 4px var(--bb-space-3);
+}
+
+.bb-carousel-item {
+  scroll-snap-align: start;
+  /* Cards in a row match heights; BarberCard's own h-100 does the rest. */
+  display: flex;
+}
+
+.bb-carousel-item > * {
+  width: 100%;
+}
+
+/* The track is focusable so the arrow keys scroll it -- which means it needs
+   a visible focus ring like anything else that can be focused. */
+.bb-carousel-track:focus-visible {
+  outline: 3px solid var(--bb-gold);
+  outline-offset: 4px;
+}

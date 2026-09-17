@@ -1,0 +1,211 @@
+/* ==========================================================================
+   VEYRON — barber dashboard
+
+   The barber's own working pages: shop profile, services, appointments,
+   status. A fresh build directly on veyron.css's --v-* tokens (no bridge
+   needed -- unlike admin.css/appointment-picker.css this isn't a legacy
+   file being kept alive, it's new).
+
+   Also reused by MyBookingsPage.js (the customer's own dashboard) -- the
+   card/table/empty-state patterns here are generic, not barber-specific.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   PAGE HEAD
+
+   Eyebrow + serif h1 + optional lede: the same composition the homepage and
+   auth screens already use, so a barber's or customer's own tools read as
+   the same product as the site they list/book on.
+   -------------------------------------------------------------------------- */
+
+.v-page-head {
+  margin-bottom: var(--v-6);
+}
+
+.v-page-head-lede {
+  color: var(--v-text-dim);
+  max-width: 60ch;
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   CARDS
+
+   .v-card: a static, elevated surface for content that isn't a link
+   anywhere (contrast with veyron.css's .v-interactive, which lifts on
+   hover because it IS one). Layered onto react-bootstrap's own <Card>, so
+   its Card.Body padding and structure are untouched -- this only re-points
+   the outer background/border/radius.
+   -------------------------------------------------------------------------- */
+
+.v-card {
+  background-color: var(--v-surface);
+  border: 1px solid var(--v-line);
+  border-radius: var(--v-radius-lg);
+}
+
+/* Visually quieter, for de-emphasised content (past/cancelled items)
+   sitting next to a normal .v-card. */
+.v-card--muted {
+  background-color: var(--v-sunken);
+  border-color: var(--v-line);
+}
+
+/* An inline expand panel (a cancel-confirm step, a review form) opening
+   inside a .v-card. A plain unstyled stack of fields would read as
+   dropped into the card as an afterthought; this gives it its own
+   slightly recessed surface so it reads as a considered part of the
+   card's own composition. */
+.v-card-inset {
+  margin-top: var(--v-3);
+  padding: var(--v-3);
+  background-color: var(--v-sunken);
+  border: 1px solid var(--v-line);
+  border-radius: var(--v-radius);
+}
+
+/* A compact summary strip above a list of cards -- real counts only, no
+   invented figures. */
+.v-summary-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--v-6);
+  margin-bottom: var(--v-6);
+  padding-bottom: var(--v-5);
+  border-bottom: 1px solid var(--v-line);
+}
+
+.v-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.v-summary-value {
+  font-family: var(--v-serif);
+  font-size: var(--v-t-2);
+  line-height: 1;
+}
+
+.v-summary-label {
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--v-text-dim);
+}
+
+/* A fieldset legend styled like the auth screens' .bb-legend -- small
+   tracked caps with a rule underneath, instead of a plain Bootstrap h5. */
+.v-fieldset-legend {
+  display: block;
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--v-text-dim);
+  padding-bottom: var(--v-3);
+  margin-bottom: var(--v-4);
+  border-bottom: 1px solid var(--v-line);
+  width: 100%;
+}
+
+/* One row of the opening-hours editor. */
+.v-hours-row {
+  padding-block: var(--v-3);
+  border-bottom: 1px solid var(--v-line);
+}
+
+.v-hours-row:last-child {
+  border-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   TABLES
+
+   Hover + spacing + a quieter header, layered onto Bootstrap's own <Table>
+   the same way .v-card layers onto <Card>.
+   -------------------------------------------------------------------------- */
+
+.v-table {
+  --bs-table-bg: transparent;
+}
+
+.v-table > :not(caption) > * > * {
+  padding-block: var(--v-3);
+}
+
+.v-table thead th {
+  font-size: var(--v-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--v-text-dim);
+  border-bottom-color: var(--v-line-strong);
+}
+
+.v-table tbody tr {
+  transition: background-color 140ms ease;
+}
+
+.v-table tbody tr:hover {
+  background-color: color-mix(in srgb, var(--v-accent) 6%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   EMPTY STATE
+
+   Icon + heading + lede + actions. Replaces the ad hoc dashed-border Card
+   used in several places. Deliberately generic, not barber-specific.
+   -------------------------------------------------------------------------- */
+
+.v-empty-state {
+  text-align: center;
+  padding: var(--v-7) var(--v-5);
+  background-color: var(--v-sunken);
+  border: 1px dashed var(--v-line-strong);
+  border-radius: var(--v-radius-lg);
+}
+
+.v-empty-state-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: var(--v-4);
+  color: var(--v-accent);
+  background-color: var(--v-elevated);
+  border: 1px solid var(--v-line-strong);
+  border-radius: var(--v-radius);
+}
+
+.v-empty-state h2,
+.v-empty-state h3 {
+  font-family: var(--v-sans);
+  font-size: var(--v-t-4);
+  font-weight: 600;
+  margin-bottom: var(--v-2);
+}
+
+.v-empty-state p {
+  color: var(--v-text-dim);
+  max-width: 46ch;
+  margin-inline: auto;
+  margin-bottom: var(--v-5);
+}
+
+.v-empty-state p:last-of-type {
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   LOADING ROW
+   -------------------------------------------------------------------------- */
+
+.v-loading-row {
+  display: flex;
+  align-items: center;
+  gap: var(--v-3);
+  padding-block: var(--v-5);
+  color: var(--v-text-dim);
+}

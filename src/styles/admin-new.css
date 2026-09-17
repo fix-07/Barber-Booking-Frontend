@@ -1,0 +1,485 @@
+/* ==========================================================================
+   ADMIN REDESIGN: BarberPro Premium Dashboard Style
+   Complete replacement of admin shell, sidebar, topbar, and content areas
+   ========================================================================== */
+
+:root {
+  --admin-gold: #B8860B;
+  --admin-gold-light: #F5E6A3;
+  --admin-gold-pale: #FDF8E7;
+  --admin-sidebar-bg: #0F0F0F;
+  --admin-sidebar-text: #888;
+  --admin-sidebar-active: #B8860B;
+  --admin-bg: #F7F7F5;
+  --admin-surface: #FFFFFF;
+  --admin-border: #E8E8E4;
+  --admin-text: #1A1A1A;
+  --admin-text-secondary: #666;
+  --admin-text-muted: #999;
+  --admin-success: #166534;
+  --admin-success-bg: #DCFCE7;
+  --admin-warning: #92400E;
+  --admin-warning-bg: #FEF3C7;
+  --admin-danger: #991B1B;
+  --admin-danger-bg: #FEE2E2;
+  --admin-radius: 10px;
+  --admin-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.bb-admin-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--admin-bg);
+}
+
+/* ── SIDEBAR ── */
+.bb-admin-sidebar {
+  width: 220px;
+  background: var(--admin-sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 0;
+  overflow-y: auto;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.bb-admin-brand {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #1E1E1E;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.bb-admin-brand .bb-monogram {
+  width: 34px;
+  height: 34px;
+  background: var(--admin-gold);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+
+.bb-admin-brand span {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.bb-admin-brand:hover { color: var(--admin-gold); }
+
+.bb-admin-nav {
+  padding: 16px 12px 8px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.bb-admin-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bb-admin-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  color: var(--admin-sidebar-text);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: background 0.12s, color 0.12s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  margin-bottom: 1px;
+}
+
+.bb-admin-nav-link:hover {
+  background: #1A1A1A;
+  color: #ccc;
+}
+
+.bb-admin-nav-link.is-active {
+  background: #1C1600;
+  color: var(--admin-gold);
+}
+
+.bb-admin-nav-link svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  opacity: 0.8;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+.bb-admin-nav-link.is-active svg {
+  opacity: 1;
+}
+
+.bb-admin-sidebar-bottom {
+  padding: 12px;
+  border-top: 1px solid #1E1E1E;
+}
+
+.bb-admin-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.bb-admin-profile-name {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #bbb;
+}
+
+.bb-admin-profile-role {
+  font-size: 11px;
+  color: #555;
+}
+
+/* ── MAIN ── */
+.bb-admin-main {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.bb-admin-topbar {
+  background: var(--admin-surface);
+  border-bottom: 1px solid var(--admin-border);
+  padding: 0 28px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.bb-admin-page-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--admin-text);
+  margin: 0;
+}
+
+.bb-admin-date {
+  font-size: 13px;
+  color: var(--admin-text-muted);
+  margin: 0;
+  margin-top: 2px;
+}
+
+.bb-admin-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bb-admin-content {
+  padding: 24px 28px;
+  flex: 1;
+}
+
+/* ── STAT CARDS ── */
+.bb-admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.bb-admin-stat-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: 16px 18px;
+  box-shadow: var(--admin-shadow);
+}
+
+.bb-admin-stat-label {
+  font-size: 12px;
+  color: var(--admin-text-muted);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.bb-admin-stat-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--admin-text);
+  letter-spacing: -0.5px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.bb-admin-stat-change {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--admin-text-muted);
+}
+
+.bb-admin-stat-change.up { color: #16A34A; }
+.bb-admin-stat-change.down { color: #DC2626; }
+
+/* ── GRID LAYOUTS ── */
+.bb-admin-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.bb-admin-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* ── CARDS ── */
+.bb-admin-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  box-shadow: var(--admin-shadow);
+  overflow: hidden;
+}
+
+.bb-admin-card-header {
+  padding: 16px 18px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.bb-admin-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--admin-text);
+  margin: 0;
+}
+
+.bb-admin-card-body {
+  padding: 16px 18px;
+}
+
+/* ── TABLES ── */
+.bb-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.bb-admin-table th {
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--admin-text-muted);
+  padding: 0 16px 10px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.bb-admin-table td {
+  padding: 11px 16px;
+  border-top: 1px solid var(--admin-border);
+  color: var(--admin-text);
+}
+
+.bb-admin-table tbody tr:hover td {
+  background: #FAFAF8;
+}
+
+.bb-admin-td-name {
+  font-weight: 500;
+}
+
+.bb-admin-td-sub {
+  font-size: 12px;
+  color: var(--admin-text-muted);
+  margin-top: 2px;
+}
+
+/* ── BADGES ── */
+.bb-admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.bb-admin-badge-success { background: var(--admin-success-bg); color: var(--admin-success); }
+.bb-admin-badge-warning { background: var(--admin-warning-bg); color: var(--admin-warning); }
+.bb-admin-badge-danger { background: var(--admin-danger-bg); color: var(--admin-danger); }
+.bb-admin-badge-neutral { background: #F0F0EC; color: #555; }
+.bb-admin-badge-gold { background: var(--admin-gold-pale); color: #7A5800; }
+
+/* ── BUTTONS ── */
+.bb-admin-btn {
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  transition: background 0.12s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bb-admin-btn:hover {
+  background: var(--admin-bg);
+}
+
+.bb-admin-btn-primary {
+  background: var(--admin-gold);
+  color: #fff;
+  border-color: var(--admin-gold);
+}
+
+.bb-admin-btn-primary:hover {
+  background: #9A7009;
+  border-color: #9A7009;
+}
+
+/* ── CHARTS ── */
+.bb-admin-chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 120px;
+  padding: 0 0 8px;
+}
+
+.bb-admin-chart-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bb-admin-chart-bar-fill {
+  width: 100%;
+  background: var(--admin-gold);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s;
+  min-height: 2px;
+}
+
+.bb-admin-chart-bar-fill.dim {
+  background: #E8E8E4;
+}
+
+.bb-admin-chart-bar-label {
+  font-size: 11px;
+  color: var(--admin-text-muted);
+  font-weight: 500;
+}
+
+/* ── PROGRESS BARS ── */
+.bb-admin-prog-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.bb-admin-prog-label {
+  font-size: 13px;
+  color: var(--admin-text-secondary);
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.bb-admin-prog-track {
+  flex: 1;
+  height: 7px;
+  background: var(--admin-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bb-admin-prog-fill {
+  height: 100%;
+  background: var(--admin-gold);
+  border-radius: 4px;
+}
+
+.bb-admin-prog-val {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--admin-text);
+  width: 40px;
+  text-align: right;
+}
+
+/* ── INPUT FIELDS ── */
+.bb-admin-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--admin-text);
+  background: var(--admin-surface);
+  font-family: inherit;
+}
+
+.bb-admin-input:focus {
+  outline: none;
+  border-color: var(--admin-gold);
+}
+
+.bb-admin-input::placeholder {
+  color: var(--admin-text-muted);
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 2px;
+}
